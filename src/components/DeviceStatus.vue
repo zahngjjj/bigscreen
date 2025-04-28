@@ -2,10 +2,6 @@
   <div class="section-item">
     <div class="box-header">
       <div class="box-title">设备运行情况</div>
-      <div class="refresh-indicator">
-        <div class="refresh-circle"></div>
-        <span>实时刷新中</span>
-      </div>
     </div>
     <div class="box-content">
       <div class="chart-container" ref="chartRef"></div>
@@ -35,28 +31,12 @@ const initChart = () => {
         top: '10%',
         left: '3%',
         right: '4%',
-        bottom: '3%',
+        bottom: '10%',
         containLabel: true
       },
       xAxis: {
-        type: 'value',
-        axisLine: {
-          show: false
-        },
-        splitLine: {
-          lineStyle: {
-            color: 'rgba(11, 62, 94, 0.3)',
-            type: 'dashed'
-          }
-        },
-        axisLabel: {
-          color: '#fff',
-          fontSize: 12
-        }
-      },
-      yAxis: {
         type: 'category',
-        data: ['设备5', '设备4', '设备3', '设备2', '设备1'],
+        data: ['设备1', '设备2', '设备3', '设备4', '设备5'],
         axisLine: {
           lineStyle: {
             color: '#0B3E5E'
@@ -74,17 +54,87 @@ const initChart = () => {
           stack: 'total',
           label: {
             show: true,
-            color: '#fff'
+            color: '#fff',
+            position: 'top',
+            distance: 10,
+            fontSize: 12,
+            formatter: '{c}'
           },
           emphasis: {
             focus: 'series'
           },
-          data: [320, 302, 301, 334, 390],
+          data: [390, 334, 301, 302, 320],
           itemStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+            color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
               { offset: 0, color: '#00B7EE' },
               { offset: 1, color: '#00D8FF' }
             ])
+          },
+          barWidth: '20%'
+        },
+        {
+          name: '运行效率',
+          type: 'line',
+          smooth: true,
+          symbol: 'circle',
+          symbolSize: 8,
+          data: [85, 92, 78, 88, 95],
+          itemStyle: {
+            color: '#1890FF'
+          },
+          lineStyle: {
+            width: 3,
+            color: '#1890FF',
+            shadowColor: 'rgba(24,144,255,0.3)',
+            shadowBlur: 10
+          },
+          yAxisIndex: 1
+        }
+      ],
+      yAxis: [
+        {
+          type: 'value',
+          name: '运行时间',
+          min: 0,
+          max: 400,
+          interval: 100,
+          axisLine: {
+            show: false
+          },
+          splitLine: {
+            lineStyle: {
+              color: 'rgba(11, 62, 94, 0.3)',
+              type: 'dashed'
+            }
+          },
+          axisLabel: {
+            color: '#fff',
+            fontSize: 12
+          }
+        },
+        {
+          type: 'value',
+          name: '效率(%)',
+          nameLocation: 'end',
+          nameGap: 15,
+          nameTextStyle: {
+            color: '#fff',
+            fontSize: 12,
+            padding: [0, 0, 0, 0]
+          },
+          min: 0,
+          max: 100,
+          interval: 20,
+          axisLine: {
+            show: false
+          },
+          splitLine: {
+            show: false
+          },
+          axisLabel: {
+            color: '#fff',
+            fontSize: 12,
+            formatter: '{value}%'
           }
         }
       ]
@@ -140,38 +190,14 @@ onUnmounted(() => {
         border-radius: $border-radius-sm;
       }
     }
-
-    .refresh-indicator {
-      display: flex;
-      align-items: center;
-      gap: $spacing-xs;
-      color: $text-secondary;
-      font-size: $font-size-md;
-
-      .refresh-circle {
-        width: $spacing-md;
-        height: $spacing-md;
-        border: 2px solid $text-secondary;
-        border-top-color: $primary-color;
-        border-radius: 50%;
-        animation: spin 1s infinite linear;
-      }
-    }
   }
 
   .box-content {
     height: calc(100% - 40px);
-    
     .chart-container {
       height: 100%;
       width: 100%;
     }
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
   }
 }
 </style> 

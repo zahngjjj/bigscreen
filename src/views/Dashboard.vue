@@ -46,55 +46,64 @@ onUnmounted(() => {
   height: 100%;
   position: relative;
   overflow: hidden;
-  
+  background-image: url('../assets/images/big_bg1.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: rgba($background-dark, 0.9);
+  color: $text-primary;
 
-.header {
-  height: 60px;
-  display: grid;
-  grid-template-columns: 200px 1fr 200px;
-  align-items: center;
-  padding: 0;
-  background: url('../assets/images/title2.png') no-repeat;
-  background-size: 100% 100%;
-  .title {
-    text-align: center;
-    font-size: $font-size-xl;
-    font-weight: bold;
-    display: flex;
-    justify-content: center;
+  .header {
+    height: 60px;
+    display: grid;
+    grid-template-columns: 200px 1fr 200px;
     align-items: center;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding-left: 120px;
-  }
-  
-  .time-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    height: 100%;
-    width: 200px;
+    padding: 0;
+    background: linear-gradient(90deg, rgba($primary-color, 0.1), rgba($primary-color, 0.2), rgba($primary-color, 0.1));
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba($primary-light, 0.2);
     
-    .time {
-      font-size: $font-size-lg;
-      color: $primary-color;
-      font-family: 'Digital-7', monospace;
-      text-shadow: 0 0 10px rgba($primary-color, $overlay-heavy);
-      line-height: 1.2;
+    .title {
+      text-align: center;
+      font-size: $font-size-xl;
+      font-weight: bold;
+      color: $text-primary;
+      text-shadow: 0 0 20px rgba($primary-light, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
       width: 100%;
+      height: 100%;
+      margin: 0;
+      padding-left: 120px;
     }
     
-    .date {
-      font-size: $font-size-md;
-      color: $primary-color;
-      margin-top: 2px;
-      line-height: 1.2;
-      width: 100%;
+    .time-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      height: 100%;
+      width: 200px;
+      
+      .time {
+        font-size: $font-size-lg;
+        color: $primary-light;
+        font-family: 'Digital-7', monospace;
+        text-shadow: 0 0 10px rgba($primary-light, $overlay-heavy);
+        line-height: 1.2;
+        width: 100%;
+      }
+      
+      .date {
+        font-size: $font-size-md;
+        color: $text-secondary;
+        margin-top: 2px;
+        line-height: 1.2;
+        width: 100%;
+      }
     }
   }
-}
  .main-content {
     height: calc(100% - 60px);
     display: grid;
