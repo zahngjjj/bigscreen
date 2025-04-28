@@ -2,10 +2,6 @@
   <div class="section-item">
     <div class="box-header">
       <div class="box-title">实时生产数据</div>
-      <div class="refresh-indicator">
-        <div class="refresh-circle"></div>
-        <span>实时刷新中</span>
-      </div>
     </div>
     <div class="box-content">
       <div class="scroll-board">
@@ -96,23 +92,6 @@ onUnmounted(() => {
         border-radius: $border-radius-sm;
       }
     }
-
-    .refresh-indicator {
-      display: flex;
-      align-items: center;
-      gap: $spacing-xs;
-      color: $text-secondary;
-      font-size: $font-size-md;
-
-      .refresh-circle {
-        width: $spacing-md;
-        height: $spacing-md;
-        border: 2px solid $text-secondary;
-        border-top-color: $primary-color;
-        border-radius: 50%;
-        animation: spin 1s infinite linear;
-      }
-    }
   }
 
   .box-content {
@@ -154,12 +133,6 @@ onUnmounted(() => {
         }
       }
     }
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
   }
 }
 </style> 

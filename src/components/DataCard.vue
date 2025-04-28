@@ -2,8 +2,8 @@
   <div class="data-card cyber-box">
     <!-- 上半部分 -->
     <div class="card-section top">
-      <ProductionStatus />
       <ProductionTrend />
+      <ProductionMachine />
       <ProductionStatus />
     </div>
 
@@ -20,6 +20,7 @@ import ProductionStatus from './ProductionStatus.vue'
 import ProductionTrend from './ProductionTrend.vue'
 import ProductionData from './ProductionData.vue'
 import DeviceStatus from './DeviceStatus.vue'
+import ProductionMachine from './ProductionMachine.vue'
 </script>
 
 <style lang="scss" scoped>

@@ -59,8 +59,10 @@ onUnmounted(() => {
     grid-template-columns: 200px 1fr 200px;
     align-items: center;
     padding: 0;
-    background: linear-gradient(90deg, rgba($primary-color, 0.1), rgba($primary-color, 0.2), rgba($primary-color, 0.1));
-    backdrop-filter: blur(10px);
+    background-image: url('../assets/images/title2.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     border-bottom: 1px solid rgba($primary-light, 0.2);
     
     .title {
