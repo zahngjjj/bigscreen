@@ -46,7 +46,7 @@ onUnmounted(() => {
   height: 100%;
   position: relative;
   overflow: hidden;
-  background-image: url('../assets/images/big_bg1.jpeg');
+  background-image: url('@/assets/images/big_bg1.jpeg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -59,7 +59,7 @@ onUnmounted(() => {
     grid-template-columns: 200px 1fr 200px;
     align-items: center;
     padding: 0;
-    background-image: url('../assets/images/title2.png');
+    background-image: url('@/assets/images/title2.png');
     background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;

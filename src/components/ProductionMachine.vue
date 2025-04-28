@@ -31,7 +31,7 @@ onMounted(() => {
         height: 0;
         padding-bottom: 40.5%;
         position: relative;
-        background: url('../assets/images/quan.png') no-repeat center center;
+        background: url('@/assets/images/quan.png') no-repeat center center;
         background-size: contain;
         max-width: 576px;
         margin: 0 auto;
