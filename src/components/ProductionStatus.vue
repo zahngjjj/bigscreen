@@ -2,7 +2,6 @@
   <div class="section-item">
     <div class="box-header">
       <div class="box-title">生产线状态</div>
-      <div class="status-indicator active"></div>
     </div>
     <div class="box-content">
       <div class="chart-container" ref="chartRef"></div>
@@ -11,7 +10,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import * as echarts from 'echarts'
 
 const chartRef = ref(null)
@@ -19,70 +18,81 @@ let chart = null
 
 const initChart = () => {
   if (chartRef.value) {
-    chart = echarts.init(chartRef.value)
-    const option = {
-      backgroundColor: 'transparent',
-      tooltip: {
-        trigger: 'item'
-      },
-      legend: {
-        orient: 'vertical',
-        right: 10,
-        top: 'center',
-        textStyle: {
-          color: '#fff'
-        }
-      },
-      series: [
-        {
-          type: 'pie',
-          radius: ['40%', '70%'],
-          avoidLabelOverlap: false,
-          itemStyle: {
-            borderRadius: 10,
-            borderColor: '#000f1d',
-            borderWidth: 2
-          },
-          label: {
-            show: false,
-            position: 'center'
-          },
-          emphasis: {
-            label: {
-              show: true,
-              fontSize: 20,
-              fontWeight: 'bold',
-              color: '#fff'
-            }
-          },
-          labelLine: {
-            show: false
-          },
-          data: [
-            { value: 1048, name: '生产中', itemStyle: { color: '#00B7EE' } },
-            { value: 735, name: '停机', itemStyle: { color: '#FF5722' } },
-            { value: 580, name: '待机', itemStyle: { color: '#FFEB3B' } },
-            { value: 484, name: '维修', itemStyle: { color: '#4CAF50' } }
-          ]
-        }
-      ]
+    // 如果已经存在实例，先销毁
+    if (chart) {
+      chart.dispose()
     }
+    
+    // 初始化图表
+    chart = echarts.init(chartRef.value, null, {
+      renderer: 'canvas',
+      useDirtyRect: false
+    })
+
+    const option = {
+      series: [{
+        type: 'pie',
+        radius: ['28%', '50%'],
+        center: ['32%', '50%'],
+        startAngle: 0,
+        avoidLabelOverlap: false,
+        label: { show: false },
+        data: [
+          { value: 120, name: 'B', itemStyle: { color: '#00FFFF' } },
+          { value: 30, name: 'A', itemStyle: { color: '#FFA500' } },
+        ],
+        emphasis: { disabled: true },
+        backgroundStyle: {
+          color: 'rgba(0,99,255,0.1)',
+          borderWidth: 2,
+          borderColor: 'rgba(255,255,255,0.2)'
+        }
+      }]
+    }
+
     chart.setOption(option)
-    window.addEventListener('resize', handleResize)
   }
 }
 
-const handleResize = () => {
-  chart?.resize()
+// 处理窗口大小变化
+const handleResize = async () => {
+  if (chart) {
+    await nextTick()
+    chart.resize()
+  }
 }
 
-onMounted(() => {
+// 监听容器大小变化
+let resizeObserver = null
+
+onMounted(async () => {
+  await nextTick()
   initChart()
+  
+  // 添加ResizeObserver监听容器大小变化
+  resizeObserver = new ResizeObserver(async () => {
+    await handleResize()
+  })
+  
+  if (chartRef.value) {
+    resizeObserver.observe(chartRef.value)
+  }
+  
+  // 监听窗口大小变化
+  window.addEventListener('resize', handleResize)
 })
 
 onUnmounted(() => {
+  // 清理监听器
   window.removeEventListener('resize', handleResize)
-  chart?.dispose()
+  if (resizeObserver) {
+    resizeObserver.disconnect()
+  }
+  // 销毁图表实例
+  if (chart) {
+    chart.dispose()
+    chart = null
+  }
 })
 </script>
 
@@ -91,6 +101,7 @@ onUnmounted(() => {
   background: rgba($background-dark, 0.2);
   border-radius: $border-radius-sm;
   padding: $spacing-sm;
+  height: 100%; // 确保容器占满高度
 
   .box-header {
     display: flex;
@@ -118,28 +129,16 @@ onUnmounted(() => {
         border-radius: $border-radius-sm;
       }
     }
-
-    .status-indicator {
-      width: $spacing-sm;
-      height: $spacing-sm;
-      border-radius: 50%;
-      background: $text-secondary;
-      position: relative;
-
-      &.active {
-        background: $primary-color;
-        box-shadow: 0 0 10px rgba($primary-color, $overlay-heavy);
-        animation: pulse 2s infinite;
-      }
-    }
   }
 
   .box-content {
     height: calc(100% - 40px);
+    width: 100%;
     
     .chart-container {
       height: 100%;
       width: 100%;
+      position: relative;
     }
   }
 }

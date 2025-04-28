@@ -106,11 +106,19 @@ onUnmounted(() => {
       width: 100%;
       border-collapse: collapse;
 
-      th, td {
+      th {
         padding: $spacing-sm;
         text-align: center;
         font-size: $font-size-md;
         color: $text-primary;
+        background-color: #072876;
+      }
+
+      td {
+        padding: $spacing-sm;
+        text-align: center;
+        font-size: $font-size-md;
+        color: #86c9f2;
       }
 
       tr {

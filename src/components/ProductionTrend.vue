@@ -1,111 +1,48 @@
 <template>
   <div class="section-item">
     <div class="box-header">
-      <div class="box-title">生产趋势</div>
-      <div class="chart-controls">
-        <span class="control active">日</span>
-        <span class="control">周</span>
-        <span class="control">月</span>
-      </div>
+      <div class="box-title">机组信息</div>
     </div>
     <div class="box-content">
-      <div class="chart-container" ref="chartRef"></div>
+      <div class="info-grid">
+        <div class="info-row">
+          <div class="info-column">
+            <div class="info-cell label">日期</div>
+            <div class="info-cell content">2024-03-14</div>
+          </div>
+          <div class="info-column">
+            <div class="info-cell label">机组</div>
+            <div class="info-cell content">A组</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-column full-width">
+            <div class="info-cell label">机组人员</div>
+            <div class="info-cell content">张三、李四、王五</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-column">
+            <div class="info-cell label">工作单号</div>
+            <div class="info-cell content">WO-20240314-001</div>
+          </div>
+          <div class="info-column">
+            <div class="info-cell label">班次</div>
+            <div class="info-cell content">早班</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-column full-width">
+            <div class="info-cell label">产品名称</div>
+            <div class="info-cell content">产品A</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
-import * as echarts from 'echarts'
-
-const chartRef = ref(null)
-let chart = null
-
-const initChart = () => {
-  if (chartRef.value) {
-    chart = echarts.init(chartRef.value)
-    const option = {
-      backgroundColor: 'transparent',
-      grid: {
-        top: '10%',
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        containLabel: true
-      },
-      xAxis: {
-        type: 'category',
-        boundaryGap: false,
-        data: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00'],
-        axisLine: {
-          lineStyle: {
-            color: '#0B3E5E'
-          }
-        },
-        axisLabel: {
-          color: '#fff',
-          fontSize: 12
-        }
-      },
-      yAxis: {
-        type: 'value',
-        axisLine: {
-          show: false
-        },
-        splitLine: {
-          lineStyle: {
-            color: 'rgba(11, 62, 94, 0.3)',
-            type: 'dashed'
-          }
-        },
-        axisLabel: {
-          color: '#fff',
-          fontSize: 12
-        }
-      },
-      series: [{
-        data: [820, 932, 901, 934, 1290, 1330],
-        type: 'line',
-        smooth: true,
-        symbol: 'circle',
-        symbolSize: 8,
-        lineStyle: {
-          color: '#00B7EE',
-          width: 3
-        },
-        itemStyle: {
-          color: '#00B7EE',
-          borderColor: '#fff',
-          borderWidth: 2
-        },
-        areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-            offset: 0,
-            color: 'rgba(0,183,238,0.4)'
-          }, {
-            offset: 1,
-            color: 'rgba(0,183,238,0.1)'
-          }])
-        }
-      }]
-    }
-    chart.setOption(option)
-    window.addEventListener('resize', handleResize)
-  }
-}
-
-const handleResize = () => {
-  chart?.resize()
-}
-
-onMounted(() => {
-  initChart()
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
-  chart?.dispose()
-})
 </script>
 
 <style lang="scss" scoped>
@@ -118,8 +55,7 @@ onUnmounted(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: $spacing-md;
-    padding-bottom: $spacing-sm;
+    padding-bottom: 8px;
     border-bottom: 1px solid rgba($primary-color, $overlay-light);
 
     .box-title {
@@ -140,34 +76,62 @@ onUnmounted(() => {
         border-radius: $border-radius-sm;
       }
     }
-
-    .chart-controls {
-      display: flex;
-      gap: $spacing-sm;
-
-      .control {
-        padding: $spacing-xs $spacing-sm;
-        border: 1px solid $text-secondary;
-        border-radius: $border-radius-md;
-        color: $text-secondary;
-        cursor: pointer;
-        transition: all $transition-normal;
-
-        &.active {
-          background: $primary-color;
-          border-color: $primary-color;
-          color: $text-primary;
-        }
-      }
-    }
   }
 
   .box-content {
-    height: calc(100% - 40px);
+    height: calc(100% - 32px);
     
-    .chart-container {
+    .info-grid {
       height: 100%;
-      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+
+      .info-row {
+        display: flex;
+        gap: 2px;
+        min-height: 40px;
+
+        .info-column {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 1px;
+
+          &.full-width {
+            flex: 2;
+          }
+
+          .info-cell {
+            background: linear-gradient(180deg, rgba(0, 183, 238, 0.1), rgba(0, 183, 238, 0.05));
+            border: 1px solid rgba(0, 183, 238, 0.2);
+            border-radius: 2px;
+            padding: 2px;
+            color: #86c9f2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            min-height: 16px;
+
+            &.label {
+              background: transparent;
+              border: none;
+              padding: 1px;
+              min-height: 14px;
+              font-size: 12px;
+              color: #7bcff8;
+            }
+
+            &.content {
+              flex: 1;
+              background: linear-gradient(180deg, rgba(0, 0, 255, 0.2), rgba(0, 0, 255, 0.1));
+              border: 1px solid rgba(0, 0, 255, 0.3);
+              color: #86c9f2;
+            }
+          }
+        }
+      }
     }
   }
 }

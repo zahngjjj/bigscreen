@@ -54,13 +54,13 @@ onUnmounted(() => {
   color: $text-primary;
 
   .header {
-    height: 60px;
+    height: 54px;
     display: grid;
     grid-template-columns: 200px 1fr 200px;
     align-items: center;
     padding: 0;
     background-image: url('../assets/images/title2.png');
-    background-size: cover;
+    background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
     border-bottom: 1px solid rgba($primary-light, 0.2);
@@ -107,12 +107,12 @@ onUnmounted(() => {
     }
   }
  .main-content {
-    height: calc(100% - 60px);
+    height: calc(100% - 54px);
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: $spacing-md;
-    padding: $spacing-md;
+    gap: 8px;
+    padding: 8px;
   }
 }
 

@@ -2,7 +2,7 @@
   <div class="data-card cyber-box">
     <!-- 上半部分 -->
     <div class="card-section top">
-      <ProductionTrend />
+      <ProductionTrend  />
       <ProductionMachine />
       <ProductionStatus />
     </div>
@@ -30,21 +30,23 @@ import ProductionMachine from './ProductionMachine.vue'
   position: relative;
   background: rgba($background-dark, 0.3);
   backdrop-filter: blur(10px);
-  padding: $spacing-md;
+  padding: 8px;
   border-radius: $border-radius-md;
   overflow: hidden;
   display: grid;
   grid-template-rows: 3fr 1fr;
-  gap: $spacing-md;
+  gap: 8px;
 
   .card-section {
     margin-bottom: 0;
     height: 100%;
     display: grid;
-    gap: $spacing-md;
+    gap: 8px;
 
     &.top {
-      grid-template-columns: repeat(3, 1fr);
+      display: grid;
+      grid-template-columns: 30% 40% 30%;
+      gap: 8px;
     }
 
     &.bottom {
