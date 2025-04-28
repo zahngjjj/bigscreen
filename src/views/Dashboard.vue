@@ -21,7 +21,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import DataCard from '@/components/DataCard.vue'
+import DataCard from '@/views/components/DataCard.vue'
 
 // 当前时间和日期
 const currentTime = ref(new Date().toLocaleTimeString())
