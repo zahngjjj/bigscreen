@@ -41,7 +41,22 @@ const initChart = () => {
           { value: 120, name: 'B', itemStyle: { color: '#00FFFF' } },
           { value: 30, name: 'A', itemStyle: { color: '#FFA500' } },
         ],
-        emphasis: { disabled: true },
+        emphasis: { 
+          scale: true,
+          scaleSize: 10,
+          focus: 'self'
+        },
+        // 添加动画效果
+        animationType: 'scale',
+        animationEasing: 'elasticOut',
+        animationDelay: function (idx) {
+          return Math.random() * 200;
+        },
+        animationDuration: 1500,
+        // 添加更新动画
+        animation: true,
+        animationDurationUpdate: 1000,
+        animationEasingUpdate: 'quarticInOut',
         backgroundStyle: {
           color: 'rgba(0,99,255,0.1)',
           borderWidth: 2,
@@ -102,6 +117,8 @@ onUnmounted(() => {
   border-radius: $border-radius-sm;
   padding: $spacing-sm;
   height: 100%; // 确保容器占满高度
+  animation: fadeInUp 0.8s ease-out forwards;
+  opacity: 0;
 
   .box-header {
     display: flex;
@@ -116,6 +133,8 @@ onUnmounted(() => {
       color: #fff;
       position: relative;
       padding-left: $spacing-sm;
+      animation: fadeIn 0.8s ease-out 0.3s forwards;
+      opacity: 0;
 
       &::before {
         content: '';
@@ -127,6 +146,9 @@ onUnmounted(() => {
         height: 16px;
         background: $primary-color;
         border-radius: $border-radius-sm;
+        animation: scaleIn 0.5s ease-out 0.6s forwards;
+        transform-origin: center;
+        opacity: 0;
       }
     }
   }
@@ -134,12 +156,45 @@ onUnmounted(() => {
   .box-content {
     height: calc(100% - 40px);
     width: 100%;
+    animation: fadeIn 1s ease-out 0.5s forwards;
+    opacity: 0;
     
     .chart-container {
       height: 100%;
       width: 100%;
       position: relative;
     }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: translateY(-50%) scaleY(0);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(-50%) scaleY(1);
+    opacity: 1;
   }
 }
 
