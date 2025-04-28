@@ -5,7 +5,7 @@
     <!-- 顶部标题 -->
     <div class="header">
       <div class="placeholder"></div>
-      <h1 class="title">工业生产实时监控平台</h1>
+      <h1 class="title">生产实时监控平台</h1>
       <div class="time-container">
         <div class="time">{{ currentTime }}</div>
         <div class="date">{{ currentDate }}</div>
@@ -370,6 +370,13 @@ onUnmounted(() => {
     text-align: center;
     font-size: $font-size-xl;
     font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding-left: 120px;
   }
   
   .time-container {
@@ -442,7 +449,7 @@ onUnmounted(() => {
 
         .box-title {
           font-size: $font-size-xl;
-          color: $primary-color;
+          color: #fff;
           position: relative;
           padding-left: $spacing-sm;
 
