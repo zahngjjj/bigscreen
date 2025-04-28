@@ -1,0 +1,53 @@
+@use "sass:math";
+
+// 主题颜色
+$primary-color: #1455d8 !default;
+$primary-light: #69cff0!default;
+$background-dark: #000B15 !default;
+$text-primary: #FFFFFF !default;
+$text-secondary: #0B3E5E !default;
+$warning-color: #FF5722 !default;
+$success-color: #4CAF50 !default;
+$waiting-color: #FFEB3B !default;
+
+// 透明度
+$overlay-light: 0.1 !default;
+$overlay-medium: 0.3 !default;
+$overlay-heavy: 0.5 !default;
+$overlay-solid: 0.8 !default;
+
+// 间距
+$spacing-xs: 4px !default;
+$spacing-sm: 8px !default;
+$spacing-md: 16px !default;
+$spacing-lg: 24px !default;
+$spacing-xl: 32px !default;
+
+// 字体大小
+$font-size-sm: 12px !default;
+$font-size-md: 14px !default;
+$font-size-lg: 16px !default;
+$font-size-xl: 20px !default;
+$font-size-xxl: 36px !default;
+
+// 边框
+$border-radius-sm: 2px !default;
+$border-radius-md: 4px !default;
+$border-radius-lg: 8px !default;
+
+// 动画时间
+$transition-fast: 0.2s !default;
+$transition-normal: 0.3s !default;
+$transition-slow: 0.5s !default;
+
+// 导出变量
+:export {
+  primaryColor: $primary-color;
+  primaryLight: $primary-light;
+  backgroundColor: $background-dark;
+  textPrimary: $text-primary;
+  textSecondary: $text-secondary;
+  warningColor: $warning-color;
+  successColor: $success-color;
+  waitingColor: $waiting-color;
+} 
