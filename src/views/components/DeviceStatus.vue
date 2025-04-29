@@ -88,24 +88,37 @@ const initChart = () => {
           z: -12,
           data: [400, 400, 400, 400, 400],
         },
+        // {
+        //   name: '运行效率',
+        //   type: 'line',
+        //   smooth: true,
+        //   symbol: 'circle',
+        //   symbolSize: 8,
+        //   data: [85, 92, 78, 88, 95],
+        //   itemStyle: {
+        //     color: '#1890FF'
+        //   },
+        //   lineStyle: {
+        //     width: 3,
+        //     color: '#1890FF',
+        //     shadowColor: 'rgba(24,144,255,0.3)',
+        //     shadowBlur: 10
+        //   },
+        //   yAxisIndex: 1
+        // },
         {
           name: '运行效率',
-          type: 'line',
+          type: "line",
           smooth: true,
-          symbol: 'circle',
+          showAllSymbol: true,
+          symbol: "emptyCircle",
           symbolSize: 8,
-          data: [85, 92, 78, 88, 95],
+          yAxisIndex: 1,
           itemStyle: {
-            color: '#1890FF'
-          },
-          lineStyle: {
-            width: 3,
             color: '#1890FF',
-            shadowColor: 'rgba(24,144,255,0.3)',
-            shadowBlur: 10
           },
-          yAxisIndex: 1
-        }
+          data: [85, 92, 78, 88, 95],
+        },
       ],
       yAxis: [
         {
