@@ -51,43 +51,63 @@ onMounted(() => {})
             left: 50%;
             transform: translate(-50%, -50%);
             color: #fff;
-            font-size: 19.2px;
+            font-size: 24px;
             font-weight: bold;
-            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
             white-space: nowrap;
+            letter-spacing: 2px;
         }
     }
 
     .left-sprites, .right-sprites {
         position: absolute;
-        top: 0;
-        height: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 90%;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        padding: 8px 0;
+        padding: 0;
     }
 
     .left-sprites {
-        left: 0;
+        left: 5%;
         .sprite-item {
-            &.top, &.bottom {
-                margin-left: 12px;
+            &.top {
+                transform: translateX(12%);
+            }
+            &.middle {
+                transform: translateX(-12%);
+            }
+            &.bottom {
+                transform: translateX(12%);
             }
         }
     }
 
     .right-sprites {
-        right: 0;
+        right: 5%;
         .sprite-item {
-            &.top, &.bottom {
-                margin-right: 12px;
+            &.top {
+                transform: translateX(-12%);
+            }
+            &.middle {
+                transform: translateX(12%);
+            }
+            &.bottom {
+                transform: translateX(-12%);
             }
         }
     }
 
     .sprite-item {
         position: relative;
+        transition: all 0.3s ease;
+        
+        &:hover {
+            transform: scale(1.1);
+            filter: brightness(1.2);
+        }
         
         &.top {
             align-self: flex-start;
@@ -102,5 +122,25 @@ onMounted(() => {})
         }
     }
 }
-</style> 
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        filter: brightness(1);
+    }
+    50% {
+        filter: brightness(1.2);
+    }
+    100% {
+        filter: brightness(1);
+    }
+}
 </style> 
