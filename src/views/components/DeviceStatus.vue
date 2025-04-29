@@ -163,13 +163,31 @@ onUnmounted(() => {
   background: rgba($background-dark, 0.2);
   border-radius: $border-radius-sm;
   padding: $spacing-sm;
+  position: relative;
+  height: 100%;
+
+  // 添加边框背景
+  // &::before {
+  //   content: '';
+  //   position: absolute;
+  //   top: -20px;
+  //   left: 0px;
+  //   width: calc(100% - 10px);
+  //   height: calc(100% + 45px);
+  //   background: url('@/assets/images/kuang_right_bottom_1.png') no-repeat center center;
+  //   background-size: contain;
+  //   pointer-events: none;
+  //   z-index: 1;
+  // }
 
   .box-header {
+    position: relative;
+    z-index: 2;
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: $spacing-md;
-    padding-bottom: $spacing-sm;
+    padding: 0 10px $spacing-sm 10px;
     border-bottom: 1px solid rgba($primary-color, $overlay-light);
 
     .box-title {
@@ -193,7 +211,10 @@ onUnmounted(() => {
   }
 
   .box-content {
+    position: relative;
+    z-index: 2;
     height: calc(100% - 40px);
+    padding: 0 10px;
     .chart-container {
       height: 100%;
       width: 100%;

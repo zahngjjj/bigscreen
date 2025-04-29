@@ -24,45 +24,105 @@ const initChart = () => {
     }
     
     // 初始化图表
-    chart = echarts.init(chartRef.value, null, {
-      renderer: 'canvas',
-      useDirtyRect: false
-    })
+    chart = echarts.init(chartRef.value)
 
     const option = {
-      series: [{
-        type: 'pie',
-        radius: ['28%', '50%'],
-        center: ['32%', '50%'],
-        startAngle: 0,
-        avoidLabelOverlap: false,
-        label: { show: false },
-        data: [
-          { value: 120, name: 'B', itemStyle: { color: '#00FFFF' } },
-          { value: 30, name: 'A', itemStyle: { color: '#FFA500' } },
-        ],
-        emphasis: { 
-          scale: true,
-          scaleSize: 10,
-          focus: 'self'
-        },
-        // 添加动画效果
-        animationType: 'scale',
-        animationEasing: 'elasticOut',
-        animationDelay: function (idx) {
-          return Math.random() * 200;
-        },
-        animationDuration: 1500,
-        // 添加更新动画
-        animation: true,
-        animationDurationUpdate: 1000,
-        animationEasingUpdate: 'quarticInOut',
-        backgroundStyle: {
-          color: 'rgba(0,99,255,0.1)',
-          borderWidth: 2,
-          borderColor: 'rgba(255,255,255,0.2)'
+      tooltip: {
+        trigger: 'item',
+        formatter: '{b}: {c} ({d}%)'
+      },
+      legend: {
+        top: '5%',
+        left: 'center',
+        textStyle: {
+          color: '#fff'
         }
-      }]
+      },
+      series: [
+        {
+          name: '3D饼图',
+          type: 'pie',
+          radius: ['30%', '60%'],
+          center: ['50%', '50%'],
+          startAngle: 180, // 起始角度
+          label: {
+            show: true,
+            formatter: '{b}\n{d}%',
+            color: '#fff',
+            fontSize: 14
+          },
+          labelLine: {
+            show: true,
+            length: 20,
+            length2: 30,
+            lineStyle: {
+              color: '#fff'
+            }
+          },
+          itemStyle: {
+            borderWidth: 2,
+            borderColor: '#0b1c3c'
+          },
+          data: [
+            { value: 35, name: '设备1' },
+            { value: 5, name: '设备2' }
+          ].map((item, index) => ({
+            ...item,
+            itemStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: getColor(index, 0.8) },
+                { offset: 1, color: getColor(index, 0.5) }
+              ])
+            }
+          })),
+          // 3D效果增强
+          emphasis: {
+            scale: true,
+            scaleSize: 12,
+            itemStyle: {
+              shadowBlur: 20,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          },
+          zlevel: 1
+        },
+        // 底部阴影
+        {
+          name: '阴影',
+          type: 'pie',
+          radius: ['30%', '60%'],
+          center: ['50%', '50%'],
+          startAngle: 180,
+          label: { show: false },
+          labelLine: { show: false },
+          silent: true,
+          data: [
+            { value: 35, name: '设备1' },
+            { value: 5, name: '设备2' }
+          ].map(item => ({
+            value: item.value,
+            itemStyle: {
+              color: 'rgba(0, 0, 0, 0.3)',
+              borderWidth: 0
+            }
+          })),
+          zlevel: 0,
+          animation: false
+        }
+      ],
+      backgroundColor: 'transparent'
+    }
+
+    // 生成渐变色
+    function getColor(index, alpha = 1) {
+      const colors = [
+        `rgba(73, 227, 255, ${alpha})`,
+        `rgba(255, 198, 44, ${alpha})`,
+        `rgba(255, 82, 132, ${alpha})`,
+        `rgba(99, 255, 147, ${alpha})`,
+        `rgba(255, 142, 44, ${alpha})`
+      ]
+      return colors[index % colors.length]
     }
 
     chart.setOption(option)
@@ -119,13 +179,30 @@ onUnmounted(() => {
   height: 100%; // 确保容器占满高度
   animation: fadeInUp 0.8s ease-out forwards;
   opacity: 0;
+  position: relative;
+  
+  // 添加边框背景
+  // &::before {
+  //   content: '';
+  //   position: absolute;
+  //   top: -20px;  // 向上延伸一点
+  //   left: 0px; // 向左延伸一点
+  //   width: calc(100% - 10px);  // 宽度增加
+  //   height: calc(100% + 45px); // 高度增加
+  //   background: url('@/assets/images/kuang_right_top_2.png') no-repeat center center;
+  //   background-size: contain;  // 改用contain确保完整显示
+  //   pointer-events: none;
+  //   z-index: 1;
+  // }
 
   .box-header {
+    position: relative;
+    z-index: 2;
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: $spacing-md;
-    padding-bottom: $spacing-sm;
+    padding: 0 10px $spacing-sm 10px;  // 增加左右内边距
     border-bottom: 1px solid rgba($primary-color, $overlay-light);
 
     .box-title {
@@ -154,8 +231,11 @@ onUnmounted(() => {
   }
 
   .box-content {
+    position: relative;
+    z-index: 2;
     height: calc(100% - 40px);
     width: 100%;
+    padding: 0 10px;  // 增加左右内边距
     animation: fadeIn 1s ease-out 0.5s forwards;
     opacity: 0;
     

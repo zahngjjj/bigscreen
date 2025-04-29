@@ -59,7 +59,7 @@ onUnmounted(() => {
     grid-template-columns: 200px 1fr 200px;
     align-items: center;
     padding: 0;
-    background-image: url('@/assets/images/title2.png');
+    background-image: url('@/assets/images/title3.png');
     background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
@@ -77,7 +77,7 @@ onUnmounted(() => {
       width: 100%;
       height: 100%;
       margin: 0;
-      padding-left: 120px;
+      // padding-left: 120px;
     }
     
     .time-container {

@@ -3,19 +3,26 @@
         <div class="Machine">
             <div class="text-content">东方闪电</div>
         </div>
+        <!-- 左侧三个 -->
+        <div class="left-sprites">
+            <SpriteRotate class="sprite-item top" text="左上"/>
+            <SpriteRotate class="sprite-item middle" text="左中"/>
+            <SpriteRotate class="sprite-item bottom" text="左下"/>
+        </div>
+        <!-- 右侧三个 -->
+        <div class="right-sprites">
+            <SpriteRotate class="sprite-item top" text="右上"/>
+            <SpriteRotate class="sprite-item middle" text="右中"/>
+            <SpriteRotate class="sprite-item bottom" text="右下"/>
+        </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted,  } from 'vue'
+import SpriteRotate from '@/components/SpriteRotate.vue'
+import { ref, onMounted } from 'vue'
 
-
-
-onMounted(() => {
-
-})
-
-
+onMounted(() => {})
 </script>
 
 <style lang="scss" scoped>
@@ -25,6 +32,7 @@ onMounted(() => {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
     
     .Machine {
         width: 72%;
@@ -35,6 +43,7 @@ onMounted(() => {
         background-size: contain;
         max-width: 576px;
         margin: 0 auto;
+        z-index: 1;
 
         .text-content {
             position: absolute;
@@ -48,6 +57,49 @@ onMounted(() => {
             white-space: nowrap;
         }
     }
-}
 
+    .left-sprites, .right-sprites {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 20px 0;
+    }
+
+    .left-sprites {
+        left: 0;
+        .sprite-item {
+            &.top, &.bottom {
+                margin-left: 12px;
+            }
+        }
+    }
+
+    .right-sprites {
+        right: 0;
+        .sprite-item {
+            &.top, &.bottom {
+                margin-right: 12px;
+            }
+        }
+    }
+
+    .sprite-item {
+        position: relative;
+        
+        &.top {
+            align-self: flex-start;
+        }
+        
+        &.middle {
+            align-self: center;
+        }
+        
+        &.bottom {
+            align-self: flex-end;
+        }
+    }
+}
 </style> 
