@@ -1,10 +1,10 @@
 <template>
-  <div class="section-item">
+  <div class="section-item" style="background-color: #000912;">
     <div class="box-header">
       <div class="box-title">生产线状态</div>
     </div>
-    <div class="box-content">
-      <div class="chart-container" ref="chartRef"></div>
+    <div class="box-content" style="background-color: #000912;">
+      <div class="chart-container" ref="chartRef" style="background-color: #000912;"></div>
     </div>
   </div>
 </template>
@@ -228,13 +228,13 @@ function getPie3D(pieData, internalDiameterRatio) {
   })
 
   return {
-    backgroundColor: "transparent",
+    backgroundColor: '#000912',
     title: {
       show: false,
     },
     color: [
     'rgba(130, 184, 105,1)',
-    'rgba(226, 155, 61,.5)',
+    'rgba(226, 155, 61,1)',
     ],
     tooltip: {
       formatter: (params) => {
@@ -274,14 +274,37 @@ function getPie3D(pieData, internalDiameterRatio) {
   }
 }
 
-const initChart = () => {
+const initChart = async () => {
   if (chartRef.value) {
-    if (chart) {
-      chart.dispose()
+    try {
+      if (chart) {
+        chart.dispose()
+      }
+
+      // 在初始化前设置容器背景色
+      chartRef.value.style.backgroundColor = '#000912'
+      
+      await nextTick()
+      
+      // 初始化时就设置背景色
+      chart = echarts.init(chartRef.value, null, {
+        renderer: 'canvas',
+        backgroundColor: '#000912'
+      })
+      
+      await nextTick()
+      
+      const option = getPie3D(seriesData, 0)
+      chart.setOption(option)
+      
+      // 确保图表完全渲染后再处理动画
+      await nextTick()
+      chart.setOption({
+        backgroundColor: '#000912'
+      })
+    } catch (error) {
+      console.error('Chart initialization error:', error)
     }
-    chart = echarts.init(chartRef.value)
-    const option = getPie3D(seriesData, 0)
-    chart.setOption(option)
   }
 }
 
@@ -297,20 +320,29 @@ const handleResize = async () => {
 let resizeObserver = null
 
 onMounted(async () => {
-  await nextTick()
-  initChart()
-  
-  // 添加ResizeObserver监听容器大小变化
-  resizeObserver = new ResizeObserver(async () => {
-    await handleResize()
-  })
-  
+  // 立即设置背景色
   if (chartRef.value) {
-    resizeObserver.observe(chartRef.value)
+    chartRef.value.style.backgroundColor = '#000912'
   }
   
-  // 监听窗口大小变化
-  window.addEventListener('resize', handleResize)
+  await nextTick()
+  
+  // 延迟初始化图表
+  setTimeout(async () => {
+    await initChart()
+    
+    // 添加ResizeObserver监听容器大小变化
+    resizeObserver = new ResizeObserver(async () => {
+      await handleResize()
+    })
+    
+    if (chartRef.value) {
+      resizeObserver.observe(chartRef.value)
+    }
+    
+    // 监听窗口大小变化
+    window.addEventListener('resize', handleResize)
+  }, 200)  // 增加延时确保DOM完全准备好
 })
 
 onUnmounted(() => {
@@ -329,28 +361,14 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .section-item {
-  background: rgba($background-dark, 0.2);
+  background: #000912;
   border-radius: $border-radius-sm;
   padding: $spacing-sm;
-  height: 100%; // 确保容器占满高度
+  height: 100%;
   animation: fadeInUp 0.8s ease-out forwards;
   opacity: 0;
   position: relative;
   
-  // 添加边框背景
-  // &::before {
-  //   content: '';
-  //   position: absolute;
-  //   top: -20px;  // 向上延伸一点
-  //   left: 0px; // 向左延伸一点
-  //   width: calc(100% - 10px);  // 宽度增加
-  //   height: calc(100% + 45px); // 高度增加
-  //   background: url('@/assets/images/kuang_right_top_2.png') no-repeat center center;
-  //   background-size: contain;  // 改用contain确保完整显示
-  //   pointer-events: none;
-  //   z-index: 1;
-  // }
-
   .box-header {
     position: relative;
     z-index: 2;
@@ -391,14 +409,17 @@ onUnmounted(() => {
     z-index: 2;
     height: calc(100% - 40px);
     width: 100%;
-    padding: 0 10px;  // 增加左右内边距
+    padding: 0 10px;
     animation: fadeIn 1s ease-out 0.5s forwards;
     opacity: 0;
+    background: #000912;  // 添加背景色
     
     .chart-container {
       height: 100%;
       width: 100%;
       position: relative;
+      background: #000912;  // 添加背景色
+      transition: background-color 0.3s ease;  // 添加过渡效果
     }
   }
 }

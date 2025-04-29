@@ -7,8 +7,10 @@
       <div class="placeholder"></div>
       <h1 class="title">生产实时监控平台</h1>
       <div class="time-container">
-        <div class="time">{{ currentTime }}</div>
-        <div class="date">{{ currentDate }}</div>
+        <div class="time">
+          <span style="margin-right: 10px;">{{ currentDate }}</span>
+          <span>{{ currentTime }}</span>
+          </div>
       </div>
     </div>
 
