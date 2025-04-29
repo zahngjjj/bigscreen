@@ -12,119 +12,275 @@
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import * as echarts from 'echarts'
+import 'echarts-gl'
 
 const chartRef = ref(null)
 let chart = null
 
+// 颜色列表
+const colorList = [  //  label 标注的字体颜色
+  "rgba(0, 255, 255, 1)",  // 青色
+  "rgba(255, 128, 0, 1)",  // 橙色
+]
+
+// 图表数据
+const echartData = [
+  {
+    value: 48,
+    name: "未上报行程单",
+  },
+  {
+    value: 32,
+    name: "途径购物店",
+  },
+]
+
+// 处理数据格式
+const seriesData = echartData.map((item, index) => {
+  return {
+    ...item,
+    actValue: item.value,
+    label: {
+      show: true,
+      position: "outside",
+      borderRadius: 5,
+      padding: [0, 5, 3, -3],
+      color: colorList[index],
+      textStyle: {
+        fontSize: 14,
+      },
+      formatter: "{b}\n\n{c}\n\n{d}%",
+    },
+  }
+})
+
+// 生成扇形的曲面参数方程
+function getParametricEquation(startRatio, endRatio, isSelected, isHovered, k, h) {
+  const midRatio = (startRatio + endRatio) / 2
+  const startRadian = startRatio * Math.PI * 2
+  const endRadian = endRatio * Math.PI * 2
+  const midRadian = midRatio * Math.PI * 2
+  
+  if (startRatio === 0 && endRatio === 1) {
+    isSelected = false
+  }
+  k = typeof k !== 'undefined' ? k : 1 / 3
+  const offsetX = isSelected ? Math.cos(midRadian) * 0.1 : 0
+  const offsetY = isSelected ? Math.sin(midRadian) * 0.1 : 0
+  const hoverRate = isHovered ? 1.05 : 1
+
+  return {
+    u: {
+      min: -Math.PI,
+      max: Math.PI * 3,
+      step: Math.PI / 32,
+    },
+    v: {
+      min: 0,
+      max: Math.PI * 2,
+      step: Math.PI / 20,
+    },
+    x: function (u, v) {
+      if (u < startRadian) {
+        return offsetX + Math.cos(startRadian) * (1 + Math.cos(v) * k) * hoverRate
+      }
+      if (u > endRadian) {
+        return offsetX + Math.cos(endRadian) * (1 + Math.cos(v) * k) * hoverRate
+      }
+      return offsetX + Math.cos(u) * (1 + Math.cos(v) * k) * hoverRate
+    },
+    y: function (u, v) {
+      if (u < startRadian) {
+        return offsetY + Math.sin(startRadian) * (1 + Math.cos(v) * k) * hoverRate
+      }
+      if (u > endRadian) {
+        return offsetY + Math.sin(endRadian) * (1 + Math.cos(v) * k) * hoverRate
+      }
+      return offsetY + Math.sin(u) * (1 + Math.cos(v) * k) * hoverRate
+    },
+    z: function (u, v) {
+      if (u < -Math.PI * 0.5) {
+        return Math.sin(u)
+      }
+      if (u > Math.PI * 2.5) {
+        return Math.sin(u)
+      }
+      return Math.sin(v) > 0 ? 60 : -1
+    },
+  }
+}
+
+// 生成3D饼图配置
+function getPie3D(pieData, internalDiameterRatio) {
+  const series = []
+  let sumValue = 0
+  let startValue = 0
+  let endValue = 0
+  const legendData = []
+  const k = typeof internalDiameterRatio !== 'undefined'
+    ? (1 - internalDiameterRatio) / (1 + internalDiameterRatio)
+    : 1 / 3
+
+  // 处理数据
+  for (let i = 0; i < pieData.length; i += 1) {
+    sumValue += pieData[i].value
+    const seriesItem = {
+      name: typeof pieData[i].name === 'undefined' ? `series${i}` : pieData[i].name,
+      type: 'surface',
+      parametric: true,
+      wireframe: {
+        show: false,
+      },
+      pieData: pieData[i],
+      pieStatus: {
+        selected: false,
+        hovered: false,
+        k,
+      },
+    }
+    if (typeof pieData[i].itemStyle !== 'undefined') {
+      const { itemStyle } = pieData[i]
+      typeof pieData[i].itemStyle.color !== 'undefined' ? (itemStyle.color = pieData[i].itemStyle.color) : null
+      typeof pieData[i].itemStyle.opacity !== 'undefined' ? (itemStyle.opacity = pieData[i].itemStyle.opacity) : null
+      seriesItem.itemStyle = itemStyle
+    }
+    series.push(seriesItem)
+  }
+
+  // 计算每个扇形的起始角度和结束角度
+  for (let i = 0; i < series.length; i += 1) {
+    endValue = startValue + series[i].pieData.value
+    series[i].pieData.startRatio = startValue / sumValue
+    series[i].pieData.endRatio = endValue / sumValue
+    series[i].parametricEquation = getParametricEquation(
+      series[i].pieData.startRatio,
+      series[i].pieData.endRatio,
+      true,
+      false,
+      k,
+      10
+    )
+    startValue = endValue
+    legendData.push(series[i].name)
+  }
+
+  // 添加2D饼图层
+  series.push({
+    name: 'pie2d',
+    type: 'pie',
+    label: {
+      color: '#ffffff',
+      opacity: 1,
+      fontStyle: 'normal',
+      fontSize: 12,
+      fontFamily: 'Microsoft YaHei',
+      formatter: (params) => {
+        const percentage = ((params.data.value / sumValue) * 100).toFixed(2)
+        return `${params.data.name}\n${params.data.value}\n${percentage}%`
+      }
+    },
+    labelLine: {
+      length: 60,
+    },
+    startAngle: -30,
+    clockwise: false,
+    radius: ['40%', '60%'],
+    center: ['50%', '50%'],
+    data: pieData,
+    itemStyle: {
+      opacity: 0,
+    },
+  })
+
+  // 添加底部透明圆环
+  series.push({
+    name: 'mouseoutSeries',
+    type: 'surface',
+    parametric: true,
+    wireframe: {
+      show: false,
+    },
+    itemStyle: {
+      opacity: 1,
+      color: '#000912',
+    },
+    parametricEquation: {
+      u: {
+        min: 0,
+        max: Math.PI * 2,
+        step: Math.PI / 20,
+      },
+      v: {
+        min: 0,
+        max: Math.PI,
+        step: Math.PI / 20,
+      },
+      x: function (u, v) {
+        return ((Math.sin(v) * Math.sin(u) + Math.sin(u)) / Math.PI) * 3.75
+      },
+      y: function (u, v) {
+        return ((Math.sin(v) * Math.cos(u) + Math.cos(u)) / Math.PI) * 3.75
+      },
+      z: function (u, v) {
+        return Math.cos(v) > 0 ? -5 : -7
+      },
+    },
+  })
+
+  return {
+    backgroundColor: "transparent",
+    title: {
+      show: false,
+    },
+    color: [
+    'rgba(130, 184, 105,1)',
+    'rgba(226, 155, 61,.5)',
+    ],
+    tooltip: {
+      formatter: (params) => {
+        if (params.seriesName !== 'mouseoutSeries') {
+          return `${params.marker}${params.seriesName}：${pieData[params.seriesIndex].value}`
+        }
+        return ''
+      },
+    },
+    xAxis3D: {
+      min: -1,
+      max: 1,
+    },
+    yAxis3D: {
+      min: -1,
+      max: 1,
+    },
+    zAxis3D: {
+      min: -1,
+      max: 1,
+    },
+    grid3D: {
+      show: false,
+      top: '-10%',
+      boxHeight: 1,
+      viewControl: {
+        alpha: 30,
+        beta: 30,
+        rotateSensitivity: 1,
+        zoomSensitivity: 0,
+        panSensitivity: 0,
+        autoRotate: true,
+        distance: 300,
+      },
+    },
+    series,
+  }
+}
+
 const initChart = () => {
   if (chartRef.value) {
-    // 如果已经存在实例，先销毁
     if (chart) {
       chart.dispose()
     }
-    
-    // 初始化图表
     chart = echarts.init(chartRef.value)
-
-    const option = {
-      tooltip: {
-        trigger: 'item',
-        formatter: '{b}: {c} ({d}%)'
-      },
-      legend: {
-        top: '5%',
-        left: 'center',
-        textStyle: {
-          color: '#fff'
-        }
-      },
-      series: [
-        {
-          name: '3D饼图',
-          type: 'pie',
-          radius: ['30%', '60%'],
-          center: ['50%', '50%'],
-          startAngle: 180, // 起始角度
-          label: {
-            show: true,
-            formatter: '{b}\n{d}%',
-            color: '#fff',
-            fontSize: 14
-          },
-          labelLine: {
-            show: true,
-            length: 20,
-            length2: 30,
-            lineStyle: {
-              color: '#fff'
-            }
-          },
-          itemStyle: {
-            borderWidth: 2,
-            borderColor: '#0b1c3c'
-          },
-          data: [
-            { value: 35, name: '设备1' },
-            { value: 5, name: '设备2' }
-          ].map((item, index) => ({
-            ...item,
-            itemStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: getColor(index, 0.8) },
-                { offset: 1, color: getColor(index, 0.5) }
-              ])
-            }
-          })),
-          // 3D效果增强
-          emphasis: {
-            scale: true,
-            scaleSize: 12,
-            itemStyle: {
-              shadowBlur: 20,
-              shadowColor: 'rgba(0, 0, 0, 0.5)'
-            }
-          },
-          zlevel: 1
-        },
-        // 底部阴影
-        {
-          name: '阴影',
-          type: 'pie',
-          radius: ['30%', '60%'],
-          center: ['50%', '50%'],
-          startAngle: 180,
-          label: { show: false },
-          labelLine: { show: false },
-          silent: true,
-          data: [
-            { value: 35, name: '设备1' },
-            { value: 5, name: '设备2' }
-          ].map(item => ({
-            value: item.value,
-            itemStyle: {
-              color: 'rgba(0, 0, 0, 0.3)',
-              borderWidth: 0
-            }
-          })),
-          zlevel: 0,
-          animation: false
-        }
-      ],
-      backgroundColor: 'transparent'
-    }
-
-    // 生成渐变色
-    function getColor(index, alpha = 1) {
-      const colors = [
-        `rgba(73, 227, 255, ${alpha})`,
-        `rgba(255, 198, 44, ${alpha})`,
-        `rgba(255, 82, 132, ${alpha})`,
-        `rgba(99, 255, 147, ${alpha})`,
-        `rgba(255, 142, 44, ${alpha})`
-      ]
-      return colors[index % colors.length]
-    }
-
+    const option = getPie3D(seriesData, 0)
     chart.setOption(option)
   }
 }

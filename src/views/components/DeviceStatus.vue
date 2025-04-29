@@ -166,7 +166,14 @@ const initChart = () => {
             formatter: '{value}%'
           }
         }
-      ]
+      ],
+      animation: true,
+      animationDuration: 1000,
+      animationEasing: 'cubicInOut',
+      animationThreshold: 2000,
+      animationDelay: function (idx) {
+        return idx * 100;
+      }
     }
     chart.setOption(option)
     window.addEventListener('resize', handleResize)
