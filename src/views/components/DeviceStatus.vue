@@ -65,12 +65,28 @@ const initChart = () => {
           },
           data: [390, 334, 301, 302, 320],
           itemStyle: {
+            borderRadius: 5,
             color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
-              { offset: 0, color: '#00B7EE' },
+              { offset: 0, color: '#072876' },
               { offset: 1, color: '#00D8FF' }
             ])
           },
           barWidth: '20%'
+        },
+        {
+          name: "背景",
+          type: "bar",
+          barGap: "-100%",
+         barWidth: '20%',
+          itemStyle: {
+            borderRadius: 5,
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: "rgba(230, 247, 255 ,.3)" },
+              { offset: 1, color: "rgba(230, 247, 255 ,.3)" },
+            ]),
+          },
+          z: -12,
+          data: [400, 400, 400, 400, 400],
         },
         {
           name: '运行效率',
