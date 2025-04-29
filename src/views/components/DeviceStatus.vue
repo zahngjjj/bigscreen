@@ -28,10 +28,10 @@ const initChart = () => {
         }
       },
       grid: {
-        top: '10%',
-        left: '3%',
-        right: '4%',
-        bottom: '10%',
+        top: '15%',
+        left: '5%',
+        right: '5%',
+        bottom: '35%',
         containLabel: true
       },
       xAxis: {
