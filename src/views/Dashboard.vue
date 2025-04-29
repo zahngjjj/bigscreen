@@ -16,6 +16,8 @@
 
     <!-- 主要内容区 -->
     <div class="main-content">
+      <div class="vertical-line"></div>
+      <div class="horizontal-line"></div>
       <DataCard v-for="i in 4" :key="i" />
     </div>
   </div>
@@ -113,8 +115,71 @@ onUnmounted(() => {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 8px;
-    padding: 8px;
+    gap: 12px;
+    padding: 12px;
+    position: relative;
+    
+    // 垂直分隔线
+    .vertical-line {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 12px;
+      height: calc(100% - 24px);
+      width: 1px;
+      transform: translateX(-50%);
+      background: linear-gradient(to right, rgba(23, 154, 254, 0.3), rgba(23, 154, 254, 0.6), rgba(23, 154, 254, 0.3));
+      box-shadow: 0 0 3px rgba(23, 154, 254, 0.5);
+      
+      &::after {
+        content: '';
+        position: absolute;
+        width: 2px;
+        height: 6px;
+        background: rgba(23, 154, 254, 0.6);
+        box-shadow: 0 0 4px rgba(23, 154, 254, 0.4);
+        border-radius: 4px;
+        left: -0.5px;
+        animation: moveVerticalDown 35s linear infinite;
+      }
+    }
+
+    // 水平分隔线
+    .horizontal-line {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      width: calc(100% - 24px);
+      height: 1px;
+      transform: translateY(-50%);
+      background: linear-gradient(to right, rgba(23, 154, 254, 0.3), rgba(23, 154, 254, 0.6), rgba(23, 154, 254, 0.3));
+      box-shadow: 0 0 3px rgba(23, 154, 254, 0.5);
+      
+      &::after {
+        content: '';
+        position: absolute;
+        width: 6px;
+        height: 2px;
+        background: rgba(23, 154, 254, 0.6);
+        box-shadow: 0 0 4px rgba(23, 154, 254, 0.4);
+        border-radius: 4px;
+        top: -0.5px;
+        animation: moveHorizontalRight 35s linear infinite;
+      }
+    }
+
+    :deep(.data-card) {
+      border: 1px solid rgba(23, 154, 254, 0.1);
+      box-shadow: 0 0 15px rgba(23, 154, 254, 0.1);
+      border-radius: 4px;
+      transition: all 0.20s ease;
+      
+      &:hover {
+        border-color: rgba(23, 154, 254, 0.3);
+        box-shadow: 0 0 20px rgba(23, 154, 254, 0.2);
+      }
+    }
   }
 }
 
@@ -183,5 +248,23 @@ onUnmounted(() => {
   to {
     transform: translateX(100%);
   }
+}
+
+@keyframes moveVerticalDown {
+    0% {
+        top: 0;
+    }
+    100% {
+        top: 100%;
+    }
+}
+
+@keyframes moveHorizontalRight {
+    0% {
+        left: 0;
+    }
+    100% {
+        left: 100%;
+    }
 }
 </style> 
