@@ -1,5 +1,6 @@
 <template>
   <div class="container flex-row j_c">
+    <span class="number">{{ number }}</span>
     <span>{{ text }}</span>
   </div>
 </template>
@@ -9,6 +10,10 @@ defineProps({
   text: {
     type: String,
     default: '苏苏_icon'
+  },
+  number: {
+    type: Number,
+    default: 0
   }
 });
 </script>
@@ -25,6 +30,11 @@ defineProps({
   animation: rotate 1s infinite steps(35, end);
     /* 添加矩形裁剪 */
   clip-path: inset(0 0 0 0); /* 或者使用具体的像素值 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }
 @keyframes rotate {
   0% {
@@ -46,7 +56,15 @@ defineProps({
   transform: translate(-50%, -50%);
 }
 .container span {
+  position: relative;
+  z-index: 2;
   text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #3f567c,
     0 0 35px #3f567c, 0 0 40px #3f567c, 0 0 50px #3f567c, 0 0 75px #3f567c;
+  color: #fff;
+  line-height: 1.2;
+}
+.container .number {
+  font-size: 18px;
+  font-weight: bold;
 }
 </style>
