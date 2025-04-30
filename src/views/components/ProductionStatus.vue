@@ -2,7 +2,28 @@
   <div class="section-item" style="background-color: #000912;">
     <BoxHeader title="生产线状态" />
     <div class="box-content" style="background-color: #000912;">
-      <div class="chart-container" ref="chartRef" style="background-color: #000912;"></div>
+      <div class="content-wrapper">
+        <div class="chart-container" ref="chartRef" style="background-color: #000912;"></div>
+        <div class="text-info">
+          <div class="percentage">
+            <CountTo
+              :startVal="0"
+              :endVal="79.23"
+              :duration="2000"
+              :decimals="2"
+              :suffix="'%'"
+            />
+          </div>
+          <div class="label">生产耗时</div>
+          <div class="value">
+            <CountTo
+              :startVal="0"
+              :endVal="412"
+              :duration="2000"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -12,6 +33,7 @@ import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import * as echarts from 'echarts'
 import 'echarts-gl'
 import BoxHeader from '@/components/BoxHeader.vue'
+import { CountTo } from 'vue3-count-to'  // 修改导入方式
 
 const chartRef = ref(null)
 let chart = null
@@ -110,7 +132,7 @@ function getParametricEquation(startRatio, endRatio, isSelected, isHovered, k, h
 }
 
 // 生成3D饼图配置
-function getPie3D(pieData, internalDiameterRatio) {
+const getPie3D = (pieData, internalDiameterRatio) => {
   const series = []
   let sumValue = 0
   let startValue = 0
@@ -168,18 +190,10 @@ function getPie3D(pieData, internalDiameterRatio) {
     name: 'pie2d',
     type: 'pie',
     label: {
-      color: '#ffffff',
-      opacity: 1,
-      fontStyle: 'normal',
-      fontSize: 12,
-      fontFamily: 'Microsoft YaHei',
-      formatter: (params) => {
-        const percentage = ((params.data.value / sumValue) * 100).toFixed(2)
-        return `${params.data.name}\n${params.data.value}\n${percentage}%`
-      }
+      show: false
     },
     labelLine: {
-      length: 60,
+      show: false
     },
     startAngle: -30,
     clockwise: false,
@@ -232,16 +246,11 @@ function getPie3D(pieData, internalDiameterRatio) {
       show: false,
     },
     color: [
-    'rgba(130, 184, 105,1)',
-    'rgba(226, 155, 61,1)',
+      'rgba(130, 184, 105,1)',
+      'rgba(226, 155, 61,1)',
     ],
     tooltip: {
-      formatter: (params) => {
-        if (params.seriesName !== 'mouseoutSeries') {
-          return `${params.marker}${params.seriesName}：${pieData[params.seriesIndex].value}`
-        }
-        return ''
-      },
+      show: false
     },
     xAxis3D: {
       min: -1,
@@ -257,11 +266,12 @@ function getPie3D(pieData, internalDiameterRatio) {
     },
     grid3D: {
       show: false,
-      top: '-10%',
+      left: '-1%',  // 向左偏移
+      top: '0%',
       boxHeight: 1,
       viewControl: {
-        alpha: 30,
-        beta: 30,
+        alpha: 35,  // 调整上下倾斜角度（0-90度）
+        beta: 30,   // 调整左右旋转角度（0-360度）
         rotateSensitivity: 1,
         zoomSensitivity: 0,
         panSensitivity: 0,
@@ -373,17 +383,70 @@ onUnmounted(() => {
     z-index: 2;
     height: calc(100% - 40px);
     width: 100%;
-    padding: 0 10px;
+    padding: 0 4px;
     animation: fadeIn 1s ease-out 0.5s forwards;
     opacity: 0;
     background: #000912;
     
-    .chart-container {
+    .content-wrapper {
+      display: flex;
+      align-items: center;
       height: 100%;
       width: 100%;
-      position: relative;
-      background: #000912;
-      transition: background-color 0.3s ease;
+
+      .chart-container {
+        flex: 1;
+        height: 100%;
+        position: relative;
+        background: #000912;
+        transition: background-color 0.3s ease;
+      }
+
+      .text-info {
+        width: 80px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-left: 2px;
+
+        .percentage {
+          font-size: 20px;
+          color: #00ffff;
+          font-weight: bold;
+          text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+          position: relative;
+          padding-bottom: 8px;  // 为分隔线留出空间
+
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg,
+              rgba(0, 255, 255, 0.1) 0%,
+              rgba(0, 255, 255, 0.3) 50%,
+              rgba(0, 255, 255, 0.1) 100%
+            );
+          }
+        }
+
+        .label {
+          font-size: 14px;
+          color: #ffffff;
+          opacity: 0.8;
+          display: flex;
+          flex-direction: column;
+          line-height: 1.2;
+        }
+
+        .value {
+          font-size: 18px;
+          color: #00ffff;
+          font-weight: bold;
+        }
+      }
     }
   }
 }
