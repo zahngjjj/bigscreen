@@ -1,8 +1,6 @@
 <template>
   <div class="section-item">
-    <div class="box-header">
-      <div class="box-title">实时生产数据</div>
-    </div>
+    <BoxHeader title="实时生产数据" />
     <div class="box-content">
       <div class="scroll-board">
         <table>
@@ -24,6 +22,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import BoxHeader from '@/components/BoxHeader.vue'
 
 const tableHeaders = ['时间', '产线', '产量', '状态']
 const tableData = ref([
@@ -67,49 +66,6 @@ onUnmounted(() => {
   padding: $spacing-sm;
   position: relative;
   height: 100%;
-
-  // &::before {
-  //   content: '';
-  //   position: absolute;
-  //   top: -20px;
-  //   left: 0px;
-  //   width: calc(100% - 10px);
-  //   height: calc(100% + 45px);
-  //   background: url('@/assets/images/kuang_right_top_2.png') no-repeat center center;
-  //   background-size: contain;
-  //   pointer-events: none;
-  //   z-index: 1;
-  // }
-
-  .box-header {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: $spacing-md;
-    padding: 0 10px $spacing-sm 10px;
-    border-bottom: 1px solid rgba($primary-color, $overlay-light);
-
-    .box-title {
-      font-size: $font-size-lg;
-      color: #fff;
-      position: relative;
-      padding-left: $spacing-sm;
-
-      &::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 4px;
-        height: 16px;
-        background: $primary-color;
-        border-radius: $border-radius-sm;
-      }
-    }
-  }
 
   .box-content {
     position: relative;

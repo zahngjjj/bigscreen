@@ -115,8 +115,8 @@ onUnmounted(() => {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 12px;
-    padding: 12px;
+    gap: 8px;
+    padding: 6px;
     position: relative;
     
     // 垂直分隔线
@@ -135,7 +135,7 @@ onUnmounted(() => {
         content: '';
         position: absolute;
         width: 2px;
-        height: 6px;
+        height: 10px;
         background: rgba(23, 154, 254, 0.6);
         box-shadow: 0 0 4px rgba(23, 154, 254, 0.4);
         border-radius: 4px;
@@ -159,7 +159,7 @@ onUnmounted(() => {
       &::after {
         content: '';
         position: absolute;
-        width: 6px;
+        width: 10px;
         height: 2px;
         background: rgba(23, 154, 254, 0.6);
         box-shadow: 0 0 4px rgba(23, 154, 254, 0.4);

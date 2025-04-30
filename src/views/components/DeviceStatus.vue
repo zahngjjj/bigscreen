@@ -1,8 +1,6 @@
 <template>
   <div class="section-item">
-    <div class="box-header">
-      <div class="box-title">设备运行情况</div>
-    </div>
+    <BoxHeader title="设备运行情况" />
     <div class="box-content">
       <div class="chart-container" ref="chartRef"></div>
     </div>
@@ -12,6 +10,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import * as echarts from 'echarts'
+import BoxHeader from '@/components/BoxHeader.vue'
 
 const chartRef = ref(null)
 let chart = null
@@ -202,59 +201,27 @@ onUnmounted(() => {
   position: relative;
   height: 100%;
 
-  // 添加边框背景
-  // &::before {
-  //   content: '';
-  //   position: absolute;
-  //   top: -20px;
-  //   left: 0px;
-  //   width: calc(100% - 10px);
-  //   height: calc(100% + 45px);
-  //   background: url('@/assets/images/kuang_right_bottom_1.png') no-repeat center center;
-  //   background-size: contain;
-  //   pointer-events: none;
-  //   z-index: 1;
-  // }
-
-  .box-header {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: $spacing-md;
-    padding: 0 10px $spacing-sm 10px;
-    border-bottom: 1px solid rgba($primary-color, $overlay-light);
-
-    .box-title {
-      font-size: $font-size-lg;
-      color: #fff;
-      position: relative;
-      padding-left: $spacing-sm;
-
-      &::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 4px;
-        height: 16px;
-        background: $primary-color;
-        border-radius: $border-radius-sm;
-      }
-    }
-  }
-
   .box-content {
     position: relative;
     z-index: 2;
     height: calc(100% - 40px);
-    padding: 0 10px;
+    
     .chart-container {
-      height: 100%;
       width: 100%;
+      height: 100%;
     }
   }
+}
+
+// 动画
+@keyframes headerShow {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 </style> 

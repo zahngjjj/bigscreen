@@ -1,8 +1,6 @@
 <template>
   <div class="section-item">
-    <div class="box-header">
-      <div class="box-title">机组信息</div>
-    </div>
+    <BoxHeader title="机组信息" />
     <div class="box-content">
       <div class="info-grid">
         <div class="info-row">
@@ -43,6 +41,7 @@
 </template>
 
 <script setup>
+import BoxHeader from '@/components/BoxHeader.vue'
 </script>
 
 <style lang="scss" scoped>
@@ -50,33 +49,6 @@
   background: rgba($background-dark, 0.2);
   border-radius: $border-radius-sm;
   padding: $spacing-sm;
-
-  .box-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba($primary-color, $overlay-light);
-
-    .box-title {
-      font-size: $font-size-lg;
-      color: #fff;
-      position: relative;
-      padding-left: $spacing-sm;
-
-      &::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 4px;
-        height: 16px;
-        background: $primary-color;
-        border-radius: $border-radius-sm;
-      }
-    }
-  }
 
   .box-content {
     height: calc(100% - 32px);

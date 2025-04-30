@@ -1,8 +1,6 @@
 <template>
   <div class="section-item" style="background-color: #000912;">
-    <div class="box-header">
-      <div class="box-title">生产线状态</div>
-    </div>
+    <BoxHeader title="生产线状态" />
     <div class="box-content" style="background-color: #000912;">
       <div class="chart-container" ref="chartRef" style="background-color: #000912;"></div>
     </div>
@@ -13,6 +11,7 @@
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import * as echarts from 'echarts'
 import 'echarts-gl'
+import BoxHeader from '@/components/BoxHeader.vue'
 
 const chartRef = ref(null)
 let chart = null
@@ -369,41 +368,6 @@ onUnmounted(() => {
   opacity: 0;
   position: relative;
   
-  .box-header {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: $spacing-md;
-    padding: 0 10px $spacing-sm 10px;  // 增加左右内边距
-    border-bottom: 1px solid rgba($primary-color, $overlay-light);
-
-    .box-title {
-      font-size: $font-size-lg;
-      color: #fff;
-      position: relative;
-      padding-left: $spacing-sm;
-      animation: fadeIn 0.8s ease-out 0.3s forwards;
-      opacity: 0;
-
-      &::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 4px;
-        height: 16px;
-        background: $primary-color;
-        border-radius: $border-radius-sm;
-        animation: scaleIn 0.5s ease-out 0.6s forwards;
-        transform-origin: center;
-        opacity: 0;
-      }
-    }
-  }
-
   .box-content {
     position: relative;
     z-index: 2;
@@ -412,14 +376,14 @@ onUnmounted(() => {
     padding: 0 10px;
     animation: fadeIn 1s ease-out 0.5s forwards;
     opacity: 0;
-    background: #000912;  // 添加背景色
+    background: #000912;
     
     .chart-container {
       height: 100%;
       width: 100%;
       position: relative;
-      background: #000912;  // 添加背景色
-      transition: background-color 0.3s ease;  // 添加过渡效果
+      background: #000912;
+      transition: background-color 0.3s ease;
     }
   }
 }

@@ -34,7 +34,7 @@ import ProductionMachine from './ProductionMachine.vue'
   border-radius: $border-radius-md;
   overflow: hidden;
   display: grid;
-  grid-template-rows: 3fr 1fr;
+  grid-template-rows: auto 3fr 1fr;
   gap: 8px;
 
   .card-section {
