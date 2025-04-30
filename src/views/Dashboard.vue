@@ -149,12 +149,13 @@ onUnmounted(() => {
       content: '';
       position: absolute;
       left: 50%;
-      top: 12px;
-      height: calc(100% - 24px);
+      top: 60px;
+      height: calc(100% - 100px);
       width: 1px;
       transform: translateX(-50%);
       background: linear-gradient(to right, rgba(23, 154, 254, 0.3), rgba(23, 154, 254, 0.6), rgba(23, 154, 254, 0.3));
       box-shadow: 0 0 3px rgba(23, 154, 254, 0.5);
+      overflow: hidden;
       
       &::after {
         content: '';
