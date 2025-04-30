@@ -276,7 +276,7 @@ const getPie3D = (pieData, internalDiameterRatio) => {
         zoomSensitivity: 0,
         panSensitivity: 0,
         autoRotate: true,
-        distance: 300,
+        distance: 320,
       },
     },
     series,

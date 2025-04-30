@@ -19,7 +19,13 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    open: true
+    open: true,
+    proxy: {
+      '/mes': {
+        target: 'http://192.168.2.3:80',
+        changeOrigin: true
+      }
+    }
   },
   build: {
     outDir: 'dist',

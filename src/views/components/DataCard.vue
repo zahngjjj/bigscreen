@@ -2,15 +2,15 @@
   <div class="data-card cyber-box">
     <!-- 上半部分 -->
     <div class="card-section top">
-      <ProductionTrend  />
-      <ProductionMachine />
-      <ProductionStatus />
+      <ProductionTrend :cardData="cardData" />
+      <ProductionMachine :cardData="cardData" />
+      <ProductionStatus :cardData="cardData" />
     </div>
 
     <!-- 下半部分 -->
     <div class="card-section bottom">
-      <ProductionData />
-      <DeviceStatus />
+      <ProductionData :cardData="cardData" />
+      <DeviceStatus :cardData="cardData" />
     </div>
   </div>
 </template>
@@ -21,6 +21,15 @@ import ProductionTrend from './ProductionTrend.vue'
 import ProductionData from './ProductionData.vue'
 import DeviceStatus from './DeviceStatus.vue'
 import ProductionMachine from './ProductionMachine.vue'
+
+// 定义 props
+const props = defineProps({
+  cardData: {
+    type: Object,
+    required: true,
+    default: () => ({})
+  }
+})
 </script>
 
 <style lang="scss" scoped>

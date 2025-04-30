@@ -1,7 +1,8 @@
+
+
+
 <template>
   <div class="dashboard-container">
-
-
     <!-- 顶部标题 -->
     <div class="header">
       <div class="logo-container">
@@ -20,26 +21,95 @@
     <div class="main-content">
       <div class="vertical-line"></div>
       <div class="horizontal-line"></div>
-      <DataCard v-for="i in 4" :key="i" />
+      <DataCard 
+        v-for="item in currentPageData" 
+        :key="item.deviceId"
+        :cardData="item"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import DataCard from '@/views/components/DataCard.vue'
+import { getAllData } from '@/api'
 
 // 当前时间和日期
 const currentTime = ref(new Date().toLocaleTimeString())
 const currentDate = ref(new Date().toLocaleDateString())
-const timer = setInterval(() => {
+const timeTimer = setInterval(() => {
   const now = new Date()
   currentTime.value = now.toLocaleTimeString()
   currentDate.value = now.toLocaleDateString()
 }, 1000)
 
+// 数据相关
+const allData = ref([]) // 所有数据
+const currentPage = ref(0) // 当前页码
+const pageSize = 4 // 每页显示数量
+
+// 计算当前页显示的数据
+const currentPageData = computed(() => {
+  const start = currentPage.value * pageSize
+  return allData.value.slice(start, start + pageSize)
+})
+
+// 切换页面的定时器
+let pageTimer = null
+
+// 切换到下一页
+const nextPage = () => {
+  const totalPages = Math.ceil(allData.value.length / pageSize)
+  currentPage.value = (currentPage.value + 1) % totalPages
+}
+
+// 获取数据并开始轮播
+  /**
+
+  这里的数据处理逻辑:
+  1. 数据轮播：
+    每页显示4条数据
+    每30秒自动切换到下一页
+    循环显示所有数据
+  2. 数据更新：
+  每600秒自动刷新一次数据，保证数据的实时性
+  在组件卸载时清理所有定时器，防止内存泄漏
+
+  */
+const startDataRotation = async () => {
+  try {
+    const res = await getAllData()
+    if (res?.data) {
+      allData.value = res.data
+      // 启动定时器，每30秒切换一次
+      pageTimer = setInterval(nextPage, 30000)
+    }
+  } catch (error) {
+    console.log('请求错误详情：', error)
+  }
+}
+
+// 定时刷新数据
+const dataRefreshTimer = setInterval(async () => {
+  try {
+    const res = await getAllData()
+    if (res?.data) {
+      allData.value = res.data
+    }
+  } catch (error) {
+    console.log('刷新数据错误：', error)
+  }
+}, 600000) // 每600秒刷新一次数据
+
+onMounted(() => {
+  startDataRotation()
+})
+
 onUnmounted(() => {
-  clearInterval(timer)
+  clearInterval(timeTimer)
+  clearInterval(pageTimer)
+  clearInterval(dataRefreshTimer)
 })
 </script>
 

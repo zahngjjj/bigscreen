@@ -22,8 +22,10 @@ pnpm-debug.log*
 Thumbs.db
 
 # 本地环境文件
+.env
 .env.local
 .env.*.local
+.env.production
 
 # 构建输出
 /dist
