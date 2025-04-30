@@ -67,10 +67,10 @@ onUnmounted(() => {
       left: 0;
       bottom: 0;
       width: 100%;
-      height: 1px;
+      height: 0.5px;
       background: linear-gradient(90deg,
         rgba(23, 154, 254, 0) 0%,
-        rgba(23, 154, 254, 0.3) 50%,
+        rgba(23, 154, 254, 0.2) 50%,
         rgba(23, 154, 254, 0) 100%
       );
       transition: opacity 0.3s ease-out 0.8s;
@@ -82,10 +82,10 @@ onUnmounted(() => {
       left: 0;
       bottom: 0;
       width: 30%;
-      height: 2px;
+      height: 1px;
       background: linear-gradient(90deg,
         rgba(23, 154, 254, 0) 0%,
-        rgba(23, 154, 254, 1) 50%,
+        rgba(23, 154, 254, 0.8) 50%,
         rgba(23, 154, 254, 0) 100%
       );
       animation: headerLight 3s ease-in-out forwards;
@@ -145,10 +145,10 @@ onUnmounted(() => {
       left: 0;
       bottom: 0;
       width: 30%;
-      height: 2px;
+      height: 1px;
       background: linear-gradient(90deg,
         rgba(23, 154, 254, 0) 0%,
-        rgba(23, 154, 254, 1) 50%,
+        rgba(23, 154, 254, 0.8) 50%,
         rgba(23, 154, 254, 0) 100%
       );
       animation: lightAnimation 3s ease-in-out forwards;
