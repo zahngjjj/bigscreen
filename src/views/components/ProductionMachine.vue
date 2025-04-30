@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import SpriteRotate from '@/components/SpriteRotate.vue'
 import { getCurrentVersionInfo } from '@/api'
 
@@ -80,7 +80,15 @@ const initData = async () => {
 
 let timer = null
 
+// 监听deviceId变化
+watch(() => props.cardData.deviceId, (newVal, oldVal) => {
+    if (newVal && newVal !== oldVal) {
+        initData()
+    }
+})
+
 onMounted(() => {
+    // 先获取初始数据
     initData()
     // 设置定时刷新
     timer = setInterval(initData, 30000)

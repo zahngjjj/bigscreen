@@ -1,6 +1,6 @@
 <template>
   <div class="section-item" style="background-color: #000912;">
-    <BoxHeader title="生产线状态" />
+    <BoxHeader title="工时利用比例" />
     <div class="box-content" style="background-color: #000912;">
       <div class="content-wrapper">
         <div class="chart-container" ref="chartRef" style="background-color: #000912;"></div>
@@ -8,17 +8,17 @@
           <div class="percentage">
             <CountTo
               :startVal="0"
-              :endVal="79.23"
+              :endVal="statusData.utilization"
               :duration="2000"
               :decimals="2"
               :suffix="'%'"
             />
           </div>
-          <div class="label">生产耗时</div>
+          <div class="label">停机耗时</div>
           <div class="value">
             <CountTo
               :startVal="0"
-              :endVal="412"
+              :endVal="statusData.stopTime"
               :duration="2000"
             />
           </div>
@@ -29,36 +29,86 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import * as echarts from 'echarts'
 import 'echarts-gl'
 import BoxHeader from '@/components/BoxHeader.vue'
-import { CountTo } from 'vue3-count-to'  // 修改导入方式
+import { CountTo } from 'vue3-count-to'
+import { getCurrentVersionInfo } from '@/api'
+
+const props = defineProps({
+  cardData: {
+    type: Object,
+    required: true,
+    default: () => ({})
+  }
+})
 
 const chartRef = ref(null)
 let chart = null
 
+// 状态数据
+const statusData = ref({
+  runTime: 0,      // 运行时间
+  stopTime: 0,     // 停机时间
+  utilization: 0   // 利用率
+})
+
 // 颜色列表
-const colorList = [  //  label 标注的字体颜色
+const colorList = [
   "rgba(0, 255, 255, 1)",  // 青色
   "rgba(255, 128, 0, 1)",  // 橙色
 ]
 
-// 图表数据
-const echartData = [
-  {
-    value: 48,
-    name: "未上报行程单",
-  },
-  {
-    value: 32,
-    name: "途径购物店",
-  },
-]
+// 获取数据
+const initData = async () => {
+  try {
+    if (!props.cardData.deviceId) return
 
-// 处理数据格式
-const seriesData = echartData.map((item, index) => {
-  return {
+    const res = await getCurrentVersionInfo({
+      deviceIds: props.cardData.deviceId
+    })
+
+    if (res.data?.[0]) {
+      const data = res.data[0]
+      const runTime = data.runTime || 0
+      const stopTime = data.stopTime || 0
+      const totalTime = runTime + stopTime
+      
+      statusData.value = {
+        runTime: runTime,
+        stopTime: stopTime,
+        utilization: totalTime > 0 ? (runTime / totalTime * 100) : 0
+      }
+
+      // 更新图表数据
+      const newChartData = [
+        {
+          value: statusData.value.runTime,
+          name: "生产运行时间",
+        },
+        {
+          value: statusData.value.stopTime,
+          name: "生产停机时间",
+        }
+      ]
+
+      // 更新图表
+      updateChart(newChartData)
+    }
+  } catch (error) {
+    console.error('获取状态信息失败:', error)
+    statusData.value = {
+      runTime: 0,
+      stopTime: 0,
+      utilization: 0
+    }
+  }
+}
+
+// 更新图表数据
+const updateChart = (newData) => {
+  const seriesData = newData.map((item, index) => ({
     ...item,
     actValue: item.value,
     label: {
@@ -72,8 +122,13 @@ const seriesData = echartData.map((item, index) => {
       },
       formatter: "{b}\n\n{c}\n\n{d}%",
     },
+  }))
+
+  if (chart) {
+    const option = getPie3D(seriesData, 0)
+    chart.setOption(option)
   }
-})
+}
 
 // 生成扇形的曲面参数方程
 function getParametricEquation(startRatio, endRatio, isSelected, isHovered, k, h) {
@@ -290,12 +345,10 @@ const initChart = async () => {
         chart.dispose()
       }
 
-      // 在初始化前设置容器背景色
       chartRef.value.style.backgroundColor = '#000912'
       
       await nextTick()
       
-      // 初始化时就设置背景色
       chart = echarts.init(chartRef.value, null, {
         renderer: 'canvas',
         backgroundColor: '#000912'
@@ -303,10 +356,21 @@ const initChart = async () => {
       
       await nextTick()
       
-      const option = getPie3D(seriesData, 0)
+      // 使用初始数据
+      const initialData = [
+        {
+          value: statusData.value.runTime,
+          name: "生产运行时间",
+        },
+        {
+          value: statusData.value.stopTime,
+          name: "生产停机时间",
+        }
+      ]
+      
+      const option = getPie3D(initialData, 0)
       chart.setOption(option)
       
-      // 确保图表完全渲染后再处理动画
       await nextTick()
       chart.setOption({
         backgroundColor: '#000912'
@@ -317,6 +381,63 @@ const initChart = async () => {
   }
 }
 
+// 定时器相关
+let timer = null
+
+// 监听deviceId变化
+watch(() => props.cardData.deviceId, (newVal, oldVal) => {
+  if (newVal && newVal !== oldVal) {
+    initData()
+  }
+})
+
+onMounted(async () => {
+  // 先获取初始数据
+  await initData()
+  
+  // 设置定时刷新
+  timer = setInterval(initData, 30000)
+
+  if (chartRef.value) {
+    chartRef.value.style.backgroundColor = '#000912'
+  }
+  
+  await nextTick()
+  
+  setTimeout(async () => {
+    await initChart()
+    
+    // 添加ResizeObserver监听容器大小变化
+    const resizeObserver = new ResizeObserver(async () => {
+      if (chart) {
+        await nextTick()
+        chart.resize()
+      }
+    })
+    
+    if (chartRef.value) {
+      resizeObserver.observe(chartRef.value)
+    }
+    
+    window.addEventListener('resize', handleResize)
+  }, 200)
+})
+
+onUnmounted(() => {
+  // 清理定时器
+  if (timer) {
+    clearInterval(timer)
+    timer = null
+  }
+
+  // 清理其他资源
+  window.removeEventListener('resize', handleResize)
+  if (chart) {
+    chart.dispose()
+    chart = null
+  }
+})
+
 // 处理窗口大小变化
 const handleResize = async () => {
   if (chart) {
@@ -324,48 +445,6 @@ const handleResize = async () => {
     chart.resize()
   }
 }
-
-// 监听容器大小变化
-let resizeObserver = null
-
-onMounted(async () => {
-  // 立即设置背景色
-  if (chartRef.value) {
-    chartRef.value.style.backgroundColor = '#000912'
-  }
-  
-  await nextTick()
-  
-  // 延迟初始化图表
-  setTimeout(async () => {
-    await initChart()
-    
-    // 添加ResizeObserver监听容器大小变化
-    resizeObserver = new ResizeObserver(async () => {
-      await handleResize()
-    })
-    
-    if (chartRef.value) {
-      resizeObserver.observe(chartRef.value)
-    }
-    
-    // 监听窗口大小变化
-    window.addEventListener('resize', handleResize)
-  }, 200)  // 增加延时确保DOM完全准备好
-})
-
-onUnmounted(() => {
-  // 清理监听器
-  window.removeEventListener('resize', handleResize)
-  if (resizeObserver) {
-    resizeObserver.disconnect()
-  }
-  // 销毁图表实例
-  if (chart) {
-    chart.dispose()
-    chart = null
-  }
-})
 </script>
 
 <style lang="scss" scoped>
