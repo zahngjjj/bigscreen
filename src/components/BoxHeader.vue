@@ -6,14 +6,40 @@
     <div class="extra">
       <slot name="extra"></slot>
     </div>
+    <!-- 第一个光线元素 -->
+    <div class="light-line" v-if="showFirstLine"></div>
+    <!-- 第二个光线元素 -->
+    <div class="light-line" v-if="!showFirstLine"></div>
   </div>
 </template>
 
 <script setup>
-defineProps({
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const props = defineProps({
   title: {
     type: String,
     default: ''
+  }
+})
+
+const showFirstLine = ref(true)
+let animationTimer = null
+
+const toggleLines = () => {
+  showFirstLine.value = !showFirstLine.value
+  // 每10秒切换一次
+  animationTimer = setTimeout(toggleLines, 10000)
+}
+
+onMounted(() => {
+  // 立即开始第一次动画
+  toggleLines()
+})
+
+onUnmounted(() => {
+  if (animationTimer) {
+    clearTimeout(animationTimer)
   }
 })
 </script>
@@ -113,6 +139,20 @@ defineProps({
       display: flex;
       align-items: center;
     }
+
+    .light-line {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 30%;
+      height: 2px;
+      background: linear-gradient(90deg,
+        rgba(23, 154, 254, 0) 0%,
+        rgba(23, 154, 254, 1) 50%,
+        rgba(23, 154, 254, 0) 100%
+      );
+      animation: lightAnimation 3s ease-in-out forwards;
+    }
 }
 
 @keyframes headerShow {
@@ -176,5 +216,23 @@ defineProps({
         left: 0;
         width: 30%;
     }
+}
+
+@keyframes lightAnimation {
+  0% {
+    left: 0;
+    width: 0;
+    opacity: 0;
+  }
+  50% {
+    left: 0;
+    width: 100%;
+    opacity: 1;
+  }
+  100% {
+    left: 0;
+    width: 30%;
+    opacity: 1;
+  }
 }
 </style> 
