@@ -29,7 +29,6 @@ defineProps({
     padding: 4px 12px;
     border: none;
     animation: headerShow 0.8s ease-out forwards;
-    transition: all 0.3s ease-out 0.8s;
     background: linear-gradient(90deg, 
       rgba(23, 154, 254, 0.05) 0%,
       rgba(23, 154, 254, 0.15) 50%,

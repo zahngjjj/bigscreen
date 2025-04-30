@@ -114,7 +114,7 @@ const contents = [
                 rgba(255, 255, 255, 0.1) 50%,
                 rgba(255, 255, 255, 0) 100%
               );
-              animation: shine 6s ease-in-out infinite;
+              animation: shine 4s ease-in-out infinite;
             }
 
             &.label {

@@ -4,7 +4,9 @@
 
     <!-- 顶部标题 -->
     <div class="header">
-      <div class="placeholder"></div>
+      <div class="logo-container">
+        <img src="@/assets/images/logo.png" alt="Logo" class="logo">
+      </div>
       <h1 class="title">生产实时监控平台</h1>
       <div class="time-container">
         <div class="time">
@@ -68,6 +70,29 @@ onUnmounted(() => {
     background-position: center;
     background-repeat: no-repeat;
     border-bottom: 1px solid rgba($primary-light, 0.2);
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 0 20px 0 0px;
+      perspective: 1000px;
+
+      
+      .logo {
+        height: 40px;
+        width: auto;
+        object-fit: contain;
+        animation: logoFadeIn 1.5s ease-out, logoRepeat 11s 1.5s infinite;
+        opacity: 0;
+        transform: scale(0.8) rotateY(90deg);
+        transform-style: preserve-3d;
+        backface-visibility: visible;
+        position: absolute;
+        left: 12px;
+        top: 6px;
+      }
+    }
     
     .title {
       text-align: center;
@@ -266,5 +291,31 @@ onUnmounted(() => {
     100% {
         left: 100%;
     }
+}
+
+@keyframes logoFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) rotateY(90deg);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05) rotateY(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotateY(0deg);
+  }
+}
+
+@keyframes logoRepeat {
+  0%, 90.9% {
+    opacity: 1;
+    transform: scale(1) rotateY(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8) rotateY(90deg);
+  }
 }
 </style> 
