@@ -32,7 +32,8 @@ let chart = null
 const chartData = ref({
   xAxis: [],
   dailyOutput: [],
-  productionCapacity: []
+  productionCapacity: [],
+  deviceCapacity: []
 })
 
 // 获取数据
@@ -69,6 +70,14 @@ const initData = async () => {
 
       console.log(chartData.value,'chartData.value')
 
+      // 造假数据测试
+      chartData.value = {
+        xAxis: ['05-01', '05-02', '05-03', '05-04', '05-05', '05-06'],
+        dailyOutput: [0, 120, 60, 80, 0, 200],
+        productionCapacity: [0, 100, 80, 120, 0, 180],
+        deviceCapacity: [200, 200, 200, 200, 200, 200]
+      }
+
       // 更新图表
       updateChart()
     }
@@ -87,16 +96,27 @@ const initData = async () => {
 const updateChart = () => {
   if (!chart) return
 
+  const maxY = Math.max(
+    ...chartData.value.dailyOutput,
+    ...chartData.value.productionCapacity,
+    ...chartData.value.deviceCapacity,
+    0
+  );
+
   const option = {
     backgroundColor: 'transparent',
     legend: {
       show: true,
       top: 10,
       left: 'center',
-      icon: 'rect',
+      icon: 'roundRect',
+      itemWidth: 18,
+      itemHeight: 10,
+      itemGap: 12,
       textStyle: {
         color: '#fff',
-        fontSize: 12
+        fontSize: 11,
+        fontWeight: 400
       }
     },
     tooltip: {
@@ -188,40 +208,25 @@ const updateChart = () => {
     yAxis: [
       {
         type: 'value',
-        axisLine: {
-          show: false
-        },
         splitLine: {
+          show: true,
           lineStyle: {
-            color: 'rgba(11, 62, 94, 0.3)',
-            type: 'dashed'
+            color: 'rgba(255,255,255,0.08)',
+            width: 1,
+            type: 'solid'
           }
         },
         axisLabel: {
           color: '#fff',
-          fontSize: 12
+          fontSize: 12,
+          formatter: '{value}',
+          show: true
         }
       },
       {
         type: 'value',
-        nameLocation: 'end',
-        nameGap: 15,
-        nameTextStyle: {
-          color: '#fff',
-          fontSize: 12,
-          padding: [0, 0, 0, 0]
-        },
-        axisLine: {
-          show: false
-        },
-        splitLine: {
-          show: false
-        },
-        axisLabel: {
-          color: '#fff',
-          fontSize: 12,
-          formatter: '{value}%'
-        }
+        splitLine: { show: false },
+        axisLabel: { show: false }
       }
     ]
   }
@@ -277,6 +282,7 @@ onUnmounted(() => {
   position: relative;
   height: 100%;
 
+
   .box-content {
     position: relative;
     z-index: 2;
@@ -287,7 +293,9 @@ onUnmounted(() => {
       height: 100%;
       position: relative;
       opacity: 0;
+      min-height: 220px;
       animation: fadeIn 0.5s ease-out forwards;
+
     }
 
     .no-data {
