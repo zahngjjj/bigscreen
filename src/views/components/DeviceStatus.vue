@@ -70,13 +70,13 @@ const initData = async () => {
 
       console.log(chartData.value,'chartData.value')
 
-      // 造假数据测试
-      chartData.value = {
-        xAxis: ['05-01', '05-02', '05-03', '05-04', '05-05', '05-06'],
-        dailyOutput: [0, 120, 60, 80, 0, 200],
-        productionCapacity: [0, 100, 80, 120, 0, 180],
-        deviceCapacity: [200, 200, 200, 200, 200, 200]
-      }
+      // // 测试数据
+      // chartData.value = {
+      //   xAxis: ['05-01', '05-02', '05-03', '05-04', '05-05', '05-06'],
+      //   dailyOutput: [0, 120, 60, 80, 0, 200],
+      //   productionCapacity: [0, 100, 80, 120, 0, 180],
+      //   deviceCapacity: [200, 200, 200, 200, 200, 200]
+      // }
 
       // 更新图表
       updateChart()
@@ -102,6 +102,17 @@ const updateChart = () => {
     ...chartData.value.deviceCapacity,
     0
   );
+
+  // 让maxY向上取整到10的倍数
+  let safeMax = Math.ceil(maxY / 10) * 10;
+  // 让interval为maxY的1/5，且为整数
+  let safeInterval = Math.max(1, Math.ceil(safeMax / 5));
+
+  // 保证interval为整数
+  safeInterval = Math.ceil(safeInterval);
+
+  // 如果safeInterval太小，可以设置最小为1或5
+  if (safeInterval < 1) safeInterval = 1;
 
   const option = {
     backgroundColor: 'transparent',
@@ -208,6 +219,9 @@ const updateChart = () => {
     yAxis: [
       {
         type: 'value',
+        min: 0,
+        max: safeMax,
+        interval: safeInterval,
         splitLine: {
           show: true,
           lineStyle: {
