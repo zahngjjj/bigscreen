@@ -58,7 +58,7 @@ const initData = async () => {
         productionDate.push(date)
         dailyOutput.push(item.dailyOutput || 0)
         productionCapacity.push(item.productionCapacity || 0)
-        deviceCapacity.push(res.data.deviceCapacity || 0)
+        deviceCapacity.push(res.data[0].deviceCapacity || 0)
       })
 
       chartData.value = {
@@ -213,7 +213,7 @@ const updateChart = () => {
         itemStyle: {
           color: '#bbab10',
         },
-        data: chartData.value.productionCapacity,
+        data: chartData.value.deviceCapacity,
       },
     ],
     yAxis: [
