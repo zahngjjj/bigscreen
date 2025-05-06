@@ -1,6 +1,6 @@
 <template>
   <div class="section-item">
-    <BoxHeader title="实时生产数据" />
+    <BoxHeader title="当班生产明细" />
     <div class="box-content">
       <div class="scroll-board">
         <table>
@@ -10,7 +10,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(row, index) in tableData" :key="index" :class="{ warning: row[3] === '警告' }">
+            <tr v-if="tableData.length === 0">
+              <td :colspan="tableHeaders.length" class="no-data">暂无数据</td>
+            </tr>
+            <tr v-else v-for="(row, index) in tableData" :key="index" :class="{ warning: row[3] === '警告' }">
               <td v-for="(cell, cellIndex) in row" :key="cellIndex">{{ cell }}</td>
             </tr>
           </tbody>
@@ -21,41 +24,69 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import BoxHeader from '@/components/BoxHeader.vue'
+import { getProductionInfo } from '@/api'
 
-const tableHeaders = ['时间', '产线', '产量', '状态']
-const tableData = ref([
-  ['10:22:33', 'MQ05', '2345', '正常'],
-  ['10:22:34', 'MQ06', '2346', '正常'],
-  ['10:22:35', 'MQ07', '2347', '警告'],
-  ['10:22:36', 'MQ08', '2348', '正常'],
-  ['10:22:37', 'MQ09', '2349', '正常']
-])
+const props = defineProps({
+  cardData: {
+    type: Object,
+    required: true,
+    default: () => ({})
+  }
+})
 
-let updateInterval
+const tableHeaders = ['产品名称', '采集数量', '采集时间', '版号']
+const tableData = ref([])
 
-const startTableDataUpdate = () => {
-  updateInterval = setInterval(() => {
-    const newRow = [
-      new Date().toLocaleTimeString(),
-      'MQ0' + Math.floor(Math.random() * 5 + 5),
-      Math.floor(Math.random() * 1000 + 2000).toString(),
-      Math.random() > 0.8 ? '警告' : '正常'
-    ]
-    tableData.value.push(newRow)
-    if (tableData.value.length > 5) {
-      tableData.value.shift()
+// 获取数据
+const initData = async () => {
+  try {
+    if (!props.cardData.deviceId) return
+
+    const res = await getProductionInfo({
+      deviceIds: props.cardData.deviceId
+    })
+
+    console.log(res,'rrrrrrrrrr')
+
+    if (res.data?.[0]) {
+      // 假设接口返回的数据结构为数组，每个元素包含 skuName, collectionQty, collectDate, versionNo
+      tableData.value = res.data.map(item => [
+        item.skuName || '-',
+        item.collectionQty?.toString() || '0',
+        item.collectDate || '-',
+        item.versionNo || '-'
+      ]).slice(0, 5) // 只显示最新的5条数据
     }
-  }, 3000)
+  } catch (error) {
+    console.error('获取生产明细失败:', error)
+    tableData.value = []
+  }
 }
 
+// 监听deviceId变化
+watch(() => props.cardData.deviceId, (newVal, oldVal) => {
+  if (newVal && newVal !== oldVal) {
+    initData()
+  }
+})
+
+let timer = null
+
 onMounted(() => {
-  startTableDataUpdate()
+  // 先获取初始数据
+  initData()
+  // 设置定时刷新
+  timer = setInterval(initData, 30000)
 })
 
 onUnmounted(() => {
-  clearInterval(updateInterval)
+  // 清理定时器
+  if (timer) {
+    clearInterval(timer)
+    timer = null
+  }
 })
 </script>
 
@@ -81,20 +112,40 @@ onUnmounted(() => {
     table {
       width: 100%;
       border-collapse: collapse;
+      table-layout: fixed;
 
-      th {
+      th, td {
         padding: $spacing-sm;
         text-align: center;
         font-size: $font-size-md;
+
+        // 产品名称列
+        &:nth-child(1) {
+          width: 130px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        // 其他列自适应
+        &:nth-child(n+2) {
+          width: auto;
+        }
+      }
+
+      th {
         color: $text-primary;
         background-color: #072876;
       }
 
       td {
-        padding: $spacing-sm;
-        text-align: center;
-        font-size: $font-size-md;
         color: #86c9f2;
+      }
+
+      .no-data {
+        color: #86c9f2;
+        text-align: center;
+        padding: 20px 0;
+        font-size: 14px;
       }
 
       tr {

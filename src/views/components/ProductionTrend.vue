@@ -91,7 +91,7 @@ onMounted(() => {
 .section-item {
   background: rgba($background-dark, 0.2);
   border-radius: $border-radius-sm;
-  padding: $spacing-sm;
+  // padding: $spacing-sm;
   padding-right: 0!important;
   position: relative;
   overflow: hidden;

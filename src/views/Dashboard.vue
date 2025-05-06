@@ -73,7 +73,7 @@ const nextPage = () => {
     每30秒自动切换到下一页
     循环显示所有数据
   2. 数据更新：
-  每600秒自动刷新一次数据，保证数据的实时性
+  每1320秒( 44台机 * 30秒  , 也就是22分钟)自动刷新一次数据，保证数据的实时性
   在组件卸载时清理所有定时器，防止内存泄漏
 
   */
@@ -100,7 +100,7 @@ const dataRefreshTimer = setInterval(async () => {
   } catch (error) {
     console.log('刷新数据错误：', error)
   }
-}, 600000) // 每600秒刷新一次数据
+}, 1320000) // 每22分钟刷新一次数据
 
 onMounted(() => {
   startDataRotation()

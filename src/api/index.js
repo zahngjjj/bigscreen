@@ -33,3 +33,11 @@ export const getCurrentVersionInfo = async (params) => {
     params 
   })
 }
+// 近十日生产产能
+export const getProductionCapacityInfo = async (params) => {
+  return await request.request({ 
+    url: '/mes/OrderInProduction/getProductionCapacityInfo',
+    method: 'get',
+    params 
+  })
+}

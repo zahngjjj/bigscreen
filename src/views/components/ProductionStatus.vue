@@ -3,7 +3,11 @@
     <BoxHeader title="工时利用比例" />
     <div class="box-content" style="background-color: #000912;">
       <div class="content-wrapper">
-        <div class="chart-container" ref="chartRef" style="background-color: #000912;"></div>
+        <div class="chart-container" ref="chartRef" style="background-color: #000912;">
+        </div>
+        <div v-if="!isLoading && statusData.runTime === 0 && statusData.stopTime === 0" class="no-data">
+            暂无数据
+          </div>
         <div class="text-info">
           <div class="percentage">
             <CountTo
@@ -54,6 +58,9 @@ const statusData = ref({
   utilization: 0   // 利用率
 })
 
+// 添加加载状态
+const isLoading = ref(true)
+
 // 颜色列表
 const colorList = [
   "rgba(0, 255, 255, 1)",  // 青色
@@ -63,8 +70,16 @@ const colorList = [
 // 获取数据
 const initData = async () => {
   try {
-    if (!props.cardData.deviceId) return
-
+    if (!props.cardData.deviceId) {
+      statusData.value = {
+        runTime: 0,
+        stopTime: 0,
+        utilization: 0
+      }
+      return
+    }
+    
+    isLoading.value = true
     const res = await getCurrentVersionInfo({
       deviceIds: props.cardData.deviceId
     })
@@ -95,6 +110,13 @@ const initData = async () => {
 
       // 更新图表
       updateChart(newChartData)
+    } else {
+      // 如果没有数据，设置为初始状态
+      statusData.value = {
+        runTime: 0,
+        stopTime: 0,
+        utilization: 0
+      }
     }
   } catch (error) {
     console.error('获取状态信息失败:', error)
@@ -103,6 +125,8 @@ const initData = async () => {
       stopTime: 0,
       utilization: 0
     }
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -456,7 +480,6 @@ const handleResize = async () => {
   animation: fadeInUp 0.8s ease-out forwards;
   opacity: 0;
   position: relative;
-  
   .box-content {
     position: relative;
     z-index: 2;
@@ -466,19 +489,32 @@ const handleResize = async () => {
     animation: fadeIn 1s ease-out 0.5s forwards;
     opacity: 0;
     background: #000912;
-    
     .content-wrapper {
       display: flex;
       align-items: center;
       height: 100%;
       width: 100%;
-
+      position: relative;
+      .no-data {
+        position: absolute;
+        top: 50%;
+        left: 30px;
+        color: #86c9f2;
+        font-size: 14px;
+        text-align: center;
+        z-index: 1;
+        pointer-events: none;
+        z-index: 99;
+      }
       .chart-container {
+        z-index: 9;
         flex: 1;
         height: 100%;
-        position: relative;
         background: #000912;
         transition: background-color 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .text-info {
