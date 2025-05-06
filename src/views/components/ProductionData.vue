@@ -58,6 +58,7 @@ const initData = async () => {
         item.versionNo || '-'
       ]).slice(0, 5) // 只显示最新的5条数据
     }
+
   } catch (error) {
     console.error('获取生产明细失败:', error)
     tableData.value = []

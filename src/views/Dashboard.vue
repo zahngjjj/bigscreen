@@ -10,7 +10,10 @@
         <div class="time">
           <span style="margin-right: 10px;">{{ currentDate }}</span>
           <span>{{ currentTime }}</span>
-          </div>
+        </div>
+        <button class="fullscreen-btn" @click="toggleFullscreen">
+          <img :src="isFullscreen ? unfullscreenIcon : fullscreenIcon" alt="fullscreen" />
+        </button>
       </div>
     </div>
 
@@ -31,7 +34,10 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import DataCard from '@/views/components/DataCard.vue'
 import { getAllData } from '@/api'
+import fullscreenIcon from '@/assets/icon_svg/fullscreen.svg'
+import unfullscreenIcon from '@/assets/icon_svg/unfullscreen.svg'
 
+const isFullscreen = ref(false)
 // 当前时间和日期
 const currentTime = ref(new Date().toLocaleTimeString())
 const currentDate = ref(new Date().toLocaleDateString())
@@ -123,14 +129,55 @@ const dataRefreshTimer = setInterval(async () => {
   }
 }, 1320000) // 每22分钟刷新一次数据
 
+const toggleFullscreen = () => {
+  const elem = document.documentElement
+  if (!isFullscreen.value) {
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen()
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen()
+    } else if (elem.mozRequestFullScreen) {
+      elem.mozRequestFullScreen()
+    } else if (elem.msRequestFullscreen) {
+      elem.msRequestFullscreen()
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen()
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen()
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen()
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen()
+    }
+  }
+}
+
+const fullscreenChangeHandler = () => {
+  isFullscreen.value = !!(
+    document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.mozFullScreenElement ||
+    document.msFullscreenElement
+  )
+}
 onMounted(() => {
   startDataRotation()
+  document.addEventListener('fullscreenchange', fullscreenChangeHandler)
+  document.addEventListener('webkitfullscreenchange', fullscreenChangeHandler)
+  document.addEventListener('mozfullscreenchange', fullscreenChangeHandler)
+  document.addEventListener('MSFullscreenChange', fullscreenChangeHandler)
 })
 
 onUnmounted(() => {
   clearInterval(timeTimer)
   clearInterval(pageTimer)
   clearInterval(dataRefreshTimer)
+  document.removeEventListener('fullscreenchange', fullscreenChangeHandler)
+  document.removeEventListener('webkitfullscreenchange', fullscreenChangeHandler)
+  document.removeEventListener('mozfullscreenchange', fullscreenChangeHandler)
+  document.removeEventListener('MSFullscreenChange', fullscreenChangeHandler)
 })
 </script>
 
@@ -200,31 +247,39 @@ onUnmounted(() => {
       // padding-left: 120px;
     }
     
-    .time-container {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
-      height: 100%;
-      width: 200px;
-      
-      .time {
-        font-size: $font-size-lg;
-        color: $primary-light;
-        font-family: 'Digital-7', monospace;
-        text-shadow: 0 0 10px rgba($primary-light, $overlay-heavy);
-        line-height: 1.2;
-        width: 100%;
-      }
-      
-      .date {
-        font-size: $font-size-md;
-        color: $text-secondary;
-        margin-top: 2px;
-        line-height: 1.2;
-        width: 100%;
-      }
+  .time-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  height: 50px;
+  width: 180px;
+  position: fixed;
+  right: 24px;
+  top: 0;
+  .time {
+    font-size: $font-size-lg;
+    color: $primary-light;
+    font-family: 'Digital-7', monospace;
+    text-shadow: 0 0 10px rgba($primary-light, $overlay-heavy);
+    line-height: 1.2;
+    width: 100%;
+  }
+  .fullscreen-btn {
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    margin-left: 12px;
+    display: flex;
+    align-items: center;
+    img {
+      width: 18px;
+      height: 18px;
+      display: block;
     }
+  }
+}
   }
  .main-content {
     height: calc(100% - 54px);
