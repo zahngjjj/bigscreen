@@ -48,7 +48,6 @@ const initData = async () => {
       deviceIds: props.cardData.deviceId
     })
 
-    console.log(res,'rrrrrrrrrr')
 
     if (res.data?.[0]) {
       // 假设接口返回的数据结构为数组，每个元素包含 skuName, collectionQty, collectDate, versionNo

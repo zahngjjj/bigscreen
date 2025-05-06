@@ -4,7 +4,7 @@ import request from '@/utils/request.js'
 // 查询当前生产工单的所有机组的信息
 export const getAllData = async (params) => {
   return await request.request({ 
-    url: '/mes/OrderInProduction/getProductionWorkInfo',
+    url: '/mes/OrderInProduction/getProductionWorkInfoDetail',
     method: 'get',
     params 
   })

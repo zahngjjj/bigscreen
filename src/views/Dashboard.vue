@@ -1,6 +1,3 @@
-
-
-
 <template>
   <div class="dashboard-container">
     <!-- 顶部标题 -->
@@ -76,13 +73,37 @@ const nextPage = () => {
   每1320秒( 44台机 * 30秒  , 也就是22分钟)自动刷新一次数据，保证数据的实时性
   在组件卸载时清理所有定时器，防止内存泄漏
 
+  3. 数据排序
+  根据你的图片，顺序大致如下, 只需维护一个 wcId 顺序数组，
+  const wcIdOrder = [
+  112, 108, 113, 110, 111, 114, 119, 183, 180, 118, 106, 107, 184
+]
+  排序时用 indexOf 比较即可。
+  wcId 一致的会自动排在一起，顺序和你的图片一致。
+  没在顺序表里的数据会排在最后。
+
   */
+const wcIdOrder = [
+  112, 108, 113, 110, 111, 114, 119, 183, 180, 118, 106, 107, 184
+]
+
+const sortByWcIdOrder = (data) => {
+  return data.slice().sort((a, b) => {
+    const indexA = wcIdOrder.indexOf(Number(a.wcId))
+    const indexB = wcIdOrder.indexOf(Number(b.wcId))
+    // 没在顺序表里的排在最后
+    if (indexA === -1 && indexB === -1) return 0
+    if (indexA === -1) return 1
+    if (indexB === -1) return -1
+    return indexA - indexB
+  })
+}
+
 const startDataRotation = async () => {
   try {
     const res = await getAllData()
     if (res?.data) {
-      allData.value = res.data
-      // 启动定时器，每30秒切换一次
+      allData.value = sortByWcIdOrder(res.data)
       pageTimer = setInterval(nextPage, 30000)
     }
   } catch (error) {
@@ -95,7 +116,7 @@ const dataRefreshTimer = setInterval(async () => {
   try {
     const res = await getAllData()
     if (res?.data) {
-      allData.value = res.data
+      allData.value = sortByWcIdOrder(res.data)
     }
   } catch (error) {
     console.log('刷新数据错误：', error)

@@ -37,11 +37,11 @@ import SpriteRotate from '@/components/SpriteRotate.vue'
 import { getCurrentVersionInfo } from '@/api'
 
 const props = defineProps({
-    cardData: {
-        type: Object,
-        required: true,
-        default: () => ({})
-    }
+  cardData: {
+    type: Object,
+    required: true,
+    default: () => ({})
+  }
 })
 
 const data = ref({})
@@ -65,13 +65,13 @@ const initData = async () => {
     try {
         if (!props.cardData.deviceId) return
 
-        const res = await getCurrentVersionInfo({
-            deviceIds: props.cardData.deviceId
-        })
+    const res = await getCurrentVersionInfo({
+        deviceIds: props.cardData.deviceId
+    })
 
         if (res.data?.[0]) {
-            data.value = res.data[0]
-        }
+    data.value = res.data[0]
+}
     } catch (error) {
         console.error('获取版本信息失败:', error)
         data.value = {}
@@ -288,7 +288,7 @@ onUnmounted(() => {
             font-size: 16px;
             font-weight: 500;
         }
-
+        
         &::after {
             content: '';
             position: absolute;

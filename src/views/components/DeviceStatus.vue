@@ -44,21 +44,20 @@ const initData = async () => {
       deviceIds: props.cardData.deviceId
     })
 
-    if (res.data && res.data.productionInfo) {
+    if (res.data && res.data[0] && res.data[0].productionInfo) {
       // 处理数据
       const productionDate = []
       const dailyOutput = [] // 当日总产量
       const productionCapacity = [] // 当日产能
       const  deviceCapacity = [] // 额定产能
 
-      console.log(res.data,'dddddddddddddddddd')
-
-      res.data.productionInfo.forEach(item => {
-        productionDate.push(item.productionDate || '-')
+      res.data[0].productionInfo.forEach(item => {
+        // 处理日期格式，只保留月-日
+        const date = item.productionDate ? item.productionDate.split('-').slice(1).join('-') : '-'
+        productionDate.push(date)
         dailyOutput.push(item.productionQty || 0)
         productionCapacity.push(item.productionQty || 0)
         deviceCapacity.push(res.data.deviceCapacity || 0)
-
       })
 
       chartData.value = {
@@ -67,6 +66,8 @@ const initData = async () => {
         productionCapacity: productionCapacity,
         deviceCapacity:deviceCapacity
       }
+
+      console.log(chartData.value,'chartData.value')
 
       // 更新图表
       updateChart()
@@ -88,6 +89,16 @@ const updateChart = () => {
 
   const option = {
     backgroundColor: 'transparent',
+    legend: {
+      show: true,
+      top: 10,
+      left: 'center',
+      icon: 'rect',
+      textStyle: {
+        color: '#fff',
+        fontSize: 12
+      }
+    },
     tooltip: {
       trigger: 'axis',
       axisPointer: {
@@ -95,10 +106,10 @@ const updateChart = () => {
       }
     },
     grid: {
-      top: '10%',
+      top: 60, // 给 legend 留空间
       left: '5%',
       right: '5%',
-      bottom: '30%',
+      bottom: '10%',
       containLabel: true
     },
     xAxis: {
@@ -111,12 +122,13 @@ const updateChart = () => {
       },
       axisLabel: {
         color: '#fff',
-        fontSize: 12
+        fontSize: 12,
+        rotate: 30 // 旋转30度，防止重叠
       }
     },
     series: [
       {
-        name: props.cardData.deviceNumber + '总产量',
+        name: '总产量',
         type: 'bar',
         stack: 'total',
         label: {
@@ -139,15 +151,17 @@ const updateChart = () => {
         type: "bar",
         barGap: "-100%",
         barWidth: '20%',
+        tooltip: { show: false },
         itemStyle: {
           borderRadius: 5,
           color: 'rgba(230, 247, 255, 0.3)'
         },
         z: -12,
-        data: chartData.value.dailyOutput.map(() => 400),
+        data: chartData.value.dailyOutput.map(() => Math.max(...chartData.value.dailyOutput, 0)),
+        legendHoverLink: false,
       },
       {
-        name: props.cardData.deviceNumber + '产能',
+        name: '产能',
         type: "line",
         smooth: true,
         showAllSymbol: true,
@@ -160,7 +174,7 @@ const updateChart = () => {
         data: chartData.value.productionCapacity,
       },
       {
-        name: props.cardData.deviceNumber + '额定产能',
+        name: '额定产能',
         type: "line",
         smooth: true,
         showAllSymbol: false,
@@ -174,7 +188,6 @@ const updateChart = () => {
     yAxis: [
       {
         type: 'value',
-        name: '运行时间',
         axisLine: {
           show: false
         },
@@ -191,7 +204,6 @@ const updateChart = () => {
       },
       {
         type: 'value',
-        name: '效率(%)',
         nameLocation: 'end',
         nameGap: 15,
         nameTextStyle: {
@@ -240,8 +252,8 @@ watch(() => props.cardData.deviceId, (newVal, oldVal) => {
 onMounted(() => {
   // 先获取初始数据
   initData()
-  // 设置定时刷新
-  timer = setInterval(initData, 30000)
+  // 设置定时刷新，12小时刷新一次
+  timer = setInterval(initData, 43200000)
   // 初始化图表
   initChart()
 })
@@ -274,6 +286,8 @@ onUnmounted(() => {
       width: 100%;
       height: 100%;
       position: relative;
+      opacity: 0;
+      animation: fadeIn 0.5s ease-out forwards;
     }
 
     .no-data {
@@ -286,7 +300,20 @@ onUnmounted(() => {
       text-align: center;
       z-index: 99;
       pointer-events: none;
+      opacity: 0;
+      animation: fadeIn 0.5s ease-out forwards;
     }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style> 

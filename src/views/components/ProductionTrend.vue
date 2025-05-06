@@ -2,7 +2,7 @@
   <div class="section-item">
     <BoxHeader title="机组信息" />
     <div class="box-content">
-      <div class="info-grid">
+      <div class="info-grid" :key="updateKey">
         <div class="info-row" v-for="(row, index) in 4" :key="index" :style="{ animationDelay: `${index * 0.1}s` }">
           <div class="info-column" :class="{ 
             'full-width': index === 1 || index === 3,
@@ -55,6 +55,9 @@ const displayContents = computed(() => [
   [props.cardData.skuName || '-']
 ])
 
+// 添加更新key用于触发动画
+const updateKey = ref(0)
+
 const initData = async () => {
   try {
     const res = await getProductionEmpInfo({
@@ -66,6 +69,8 @@ const initData = async () => {
         empName: res.data.map(item => item.empName).join('、') || '-_',
         classTypeName: res.data[0].classTypeName || '-_'
       }
+      // 更新key触发动画
+      updateKey.value++
     }
   } catch (error) {
     console.error('获取员工信息失败:', error)
@@ -127,9 +132,9 @@ onMounted(() => {
         gap: 2px;
         min-height: 40px;
         opacity: 0;
-        transform: translateX(-10px);
-        animation: slideIn 0.8s ease-out forwards;
-        animation-delay: calc(var(--index, 0) * 0.2s);
+        transform: translateY(10px);
+        animation: fadeInUp 0.5s ease-out forwards;
+        animation-delay: calc(var(--index, 0) * 0.1s);
 
         .info-column {
           flex: 1;
@@ -228,6 +233,17 @@ onMounted(() => {
         }
       }
     }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
