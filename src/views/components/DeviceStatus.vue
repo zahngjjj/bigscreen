@@ -56,8 +56,8 @@ const initData = async () => {
         // 处理日期格式，只保留月-日
         const date = item.productionDate ? item.productionDate.split('-').slice(1).join('-') : '-'
         productionDate.push(date)
-        dailyOutput.push(item.productionQty || 0)
-        productionCapacity.push(item.productionQty || 0)
+        dailyOutput.push(item.dailyOutput || 0)
+        productionCapacity.push(item.productionCapacity || 0)
         deviceCapacity.push(res.data.deviceCapacity || 0)
       })
 
